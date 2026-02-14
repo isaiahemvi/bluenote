@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/isaiahemvi/bluenote#readme",
   "dependencies": {
+    "csv-parser": "^3.2.0",
+    "fs": "^0.0.1-security",
     "ioredis": "^5.9.3"
   }
 }
