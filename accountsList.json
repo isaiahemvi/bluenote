@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Sapphire Rewards",
+    "limit" : 5000, 
+    "balance" : 2500, 
+    "nickname": "Travel Card",
+    "cashback": {
+      "fuel": 1,
+      "food": 3,
+      "groceries": 1,
+      "travel": 5,
+      "other": 1
+    }
+  },
+  {
+    "id": 2,
+    "name": "Everyday Cash Preferred",
+    "limit" : 5000, 
+    "balance" : 2500, 
+    "nickname": "Groceries",
+    "cashback": {
+      "fuel": 3,
+      "food": 1,
+      "groceries": 6,
+      "travel": 1,
+      "other": 1.5
+    }
+  },
+  {
+    "id": 3,
+    "name": "Citi",
+    "nickname": "Citi Credit Card",
+    "cashback": {
+      "fuel": 2,
+      "food": 2,
+      "groceries": 4,
+      "travel": 1,
+      "other": 4
+    }
+  }
+]

@@ -1,0 +1,11 @@
+account_id,merchant,category,amount
+1,Delta Airlines,travel,-450.00
+2,Whole Foods,groceries,124.50
+2,Shell Station,fuel,45.00
+1,Starbucks,food,-8.50
+3,Payroll Deposit,other,2500.00
+2,Chipotle,food,-15.20
+1,Uber,travel,-24.00
+2,Kroger,groceries,-67.89
+3,Venmo Transfer,other,50.00
+2,Exxon,fuel,38.00
