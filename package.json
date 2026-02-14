@@ -1,0 +1,24 @@
+{
+  "name": "bluenote",
+  "version": "1.0.0",
+  "description": "An AI-powered financial management platform that analyzes transaction history to deliver personalized insights and recommend credit cards that save you money.",
+  "main": "dataLoader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaiahemvi/bluenote.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/isaiahemvi/bluenote/issues"
+  },
+  "homepage": "https://github.com/isaiahemvi/bluenote#readme",
+  "dependencies": {
+    "ioredis": "^5.9.3"
+  }
+}
