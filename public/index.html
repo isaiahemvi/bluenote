@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluenote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&display=swap" rel="stylesheet">
+    <style>
+        * {
+     
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transform-style: preserve-3d;
+        }
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 400;
+            color: rgba(255, 200, 100, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Italiana', sans-serif;
+            position: absolute;
+            left: 3rem;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .navbar-menu a {
+            color: rgba(255, 200, 100, 0.7);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-family: 'Italiana', serif;
+        }
+        .navbar-menu a:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+        .scene {
+            width: 100vw;
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .city {
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 1vmin;
+        }
+        .city-layer {
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 1vmin;
+        }
+        /* Background layer - furthest back */
+        .layer-back {
+            transform: translateZ(-50vmin) scale(0.7);
+            opacity: 0.4;
+            filter: blur(1px);
+        }
+        /* Middle layer */
+        .layer-mid {
+            transform: translateZ(-25vmin) scale(0.85);
+            opacity: 0.7;
+        }
+        /* Front layer */
+        .layer-front {
+            transform: translateZ(0);
+            opacity: 1;
+        }
+        /* Cuboid structure */
+        .building {
+            --width: 15;
+            --depth: 15;
+            --height: 20;
+            --hue: 235;
+            height: calc(var(--height) * 1vmin);
+            width: calc(var(--width) * 1vmin);
+            position: relative;
+        }
+        .building .side {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 100%;
+            width: 100%;
+            border-radius: 0.5vmin 0.5vmin 0 0;
+        }
+        /* Front face */
+        .building .side:nth-of-type(1) {
+            transform: translate3d(-50%, -50%, calc(var(--depth) * 0.5vmin));
+            background: linear-gradient(to bottom, #12121a 0%, #08080e 100%);
+        }
+        /* Back face */
+        .building .side:nth-of-type(2) {
+            transform: translate3d(-50%, -50%, calc(var(--depth) * -0.5vmin)) rotateY(180deg);
+            background: #0a0a10;
+        }
+        /* Right side */
+        .building .side:nth-of-type(3) {
+            width: calc(var(--depth) * 1vmin);
+            transform: translate(-50%, -50%) rotateY(90deg) translate3d(0, 0, calc(var(--width) * 0.5vmin));
+            background: linear-gradient(to bottom, #0e0e14 0%, #06060a 100%);
+        }
+        /* Left side */
+        .building .side:nth-of-type(4) {
+            width: calc(var(--depth) * 1vmin);
+            transform: translate(-50%, -50%) rotateY(-90deg) translate3d(0, 0, calc(var(--width) * 0.5vmin));
+            background: #080810;
+        }
+        /* Top */
+        .building .side:nth-of-type(5) {
+            height: calc(var(--depth) * 1vmin);
+            transform: translate(-50%, -50%) rotateX(90deg) translate3d(0, 0, calc(var(--height) * 0.5vmin));
+            background: #030305;
+        }
+        /* Bottom */
+        .building .side:nth-of-type(6) {
+            height: calc(var(--depth) * 1vmin);
+            transform: translate(-50%, -50%) rotateX(-90deg) translate3d(0, 0, calc(var(--height) * 0.5vmin));
+            background: #000;
+        }
+        /* Windows */
+        .windows {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5vmin;
+            padding: 2vmin 1.5vmin;
+        }
+        .window {
+            border-radius: 0.2vmin;
+        }
+        .window.on {
+            background: rgba(255, 200, 100, 0.7);
+            box-shadow: 0 0 1vmin rgba(255, 200, 100, 0.5);
+        }
+        .window.dim {
+            background: rgba(255, 200, 100, 0.25);
+            box-shadow: 0 0 0.3vmin rgba(255, 200, 100, 0.2);
+        }
+        .window.off {
+            background: rgba(20, 20, 30, 0.4);
+            box-shadow: none;
+        }
+        /* Rain */
+        .rain {
+            position: absolute;
+            width: 0.3vmin;
+            height: 12vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.06));
+            top: -12vmin;
+            will-change: transform;
+            z-index: 1;
+        }
+        /* Background rain - smaller and slower */
+        .rain.background {
+            width: 0.2vmin;
+            height: 10vmin;
+            top: -10vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.04));
+        }
+        /* Foreground rain - bigger and faster */
+        .rain.foreground {
+            width: 0.5vmin;
+            height: 15vmin;
+            top: -15vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.08));
+        }
+        @keyframes rainfall {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(120vh);
+            }
+        }
+        /* Fog layers */
+        .fog {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 500;
+        }
+        .fog-layer {
+            position: absolute;
+            width: 200%;
+            height: 40vh;
+            background: radial-gradient(ellipse at center, rgba(100, 110, 130, 0.15) 0%, transparent 70%);
+            filter: blur(30px);
+        }
+        .fog-layer:nth-child(1) {
+            bottom: 0;
+            left: -50%;
+            opacity: 0.6;
+        }
+        .fog-layer:nth-child(2) {
+            bottom: 15vh;
+            left: -30%;
+            opacity: 0.4;
+            background: radial-gradient(ellipse at center, rgba(80, 90, 110, 0.12) 0%, transparent 70%);
+        }
+        .fog-layer:nth-child(3) {
+            bottom: 30vh;
+            left: -60%;
+            opacity: 0.3;
+            background: radial-gradient(ellipse at center, rgba(90, 100, 120, 0.1) 0%, transparent 70%);
+        }
+        .fog-layer:nth-child(4) {
+            bottom: 10vh;
+            left: -40%;
+            opacity: 0.5;
+            background: radial-gradient(ellipse at center, rgba(110, 120, 140, 0.13) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">Bluenote</div>
+        <ul class="navbar-menu">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+    </nav>
+    <div class="scene">
+        <!-- Fog layers -->
+        <div class="fog">
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+        </div>
+        
+        <div class="city">
+            <div class="city-layer layer-back"></div>
+            <div class="city-layer layer-mid"></div>
+            <div class="city-layer layer-front"></div>
+        </div>
+    </div>
+    <script>
+        // Seeded random number generator for consistent window states
+        class SeededRandom {
+            constructor(seed) {
+                this.seed = seed;
+            }
+            
+            next() {
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            }
+        }
+        // Building configurations for front layer
+        const frontBuildings = [
+            { width: 12, depth: 12, height: 25, windows: 3 },
+            { width: 15, depth: 15, height: 35, windows: 4 },
+            { width: 10, depth: 10, height: 18, windows: 2 },
+            { width: 18, depth: 12, height: 30, windows: 3 },
+            { width: 14, depth: 14, height: 22, windows: 3 },
+            { width: 11, depth: 11, height: 28, windows: 3 },
+            { width: 16, depth: 13, height: 32, windows: 4 },
+            { width: 13, depth: 13, height: 20, windows: 2 },
+            { width: 12, depth: 15, height: 26, windows: 3 },
+            { width: 17, depth: 14, height: 38, windows: 4 }
+        ];
+        // Middle layer buildings
+        const midBuildings = [
+            { width: 14, depth: 11, height: 24, windows: 3 },
+            { width: 15, depth: 16, height: 29, windows: 3 },
+            { width: 11, depth: 12, height: 21, windows: 2 },
+            { width: 13, depth: 13, height: 33, windows: 4 },
+            { width: 16, depth: 15, height: 27, windows: 3 },
+            { width: 12, depth: 14, height: 23, windows: 3 },
+            { width: 14, depth: 13, height: 31, windows: 3 },
+            { width: 15, depth: 12, height: 19, windows: 2 },
+            { width: 13, depth: 14, height: 36, windows: 4 },
+            { width: 11, depth: 11, height: 25, windows: 3 },
+            { width: 16, depth: 13, height: 28, windows: 3 },
+            { width: 12, depth: 15, height: 22, windows: 2 }
+        ];
+        // Background layer buildings
+        const backBuildings = [
+            { width: 15, depth: 15, height: 30, windows: 3 },
+            { width: 13, depth: 12, height: 26, windows: 3 },
+            { width: 16, depth: 14, height: 34, windows: 4 },
+            { width: 14, depth: 13, height: 28, windows: 3 },
+            { width: 12, depth: 16, height: 32, windows: 3 },
+            { width: 17, depth: 15, height: 29, windows: 4 },
+            { width: 11, depth: 11, height: 24, windows: 2 },
+            { width: 15, depth: 14, height: 35, windows: 4 },
+            { width: 13, depth: 13, height: 27, windows: 3 },
+            { width: 14, depth: 12, height: 31, windows: 3 },
+            { width: 16, depth: 16, height: 33, windows: 4 },
+            { width: 12, depth: 14, height: 25, windows: 3 },
+            { width: 15, depth: 13, height: 29, windows: 3 },
+            { width: 14, depth: 15, height: 26, windows: 3 }
+        ];
+        function getWindowState(rng) {
+            const rand = rng.next();
+            if (rand < 0.35) return 'off';
+            if (rand < 0.65) return 'dim';
+            return 'on';
+        }
+        function createBuilding(config, buildingIndex) {
+            // Use building index as seed for consistent window states
+            const rng = new SeededRandom(buildingIndex * 1000);
+            
+            const building = document.createElement('div');
+            building.className = 'building';
+            building.style.setProperty('--width', config.width);
+            building.style.setProperty('--depth', config.depth);
+            building.style.setProperty('--height', config.height);
+            // Create 6 sides
+            for (let i = 0; i < 6; i++) {
+                const side = document.createElement('div');
+                side.className = 'side';
+                // Add windows to front face only
+                if (i === 0) {
+                    const windowsDiv = document.createElement('div');
+                    windowsDiv.className = 'windows';
+                    windowsDiv.style.gridTemplateColumns = `repeat(${config.windows}, 1fr)`;
+                    const numWindows = config.windows * Math.floor(config.height / 4);
+                    for (let j = 0; j < numWindows; j++) {
+                        const window = document.createElement('div');
+                        const state = getWindowState(rng);
+                        window.className = `window ${state}`;
+                        windowsDiv.appendChild(window);
+                    }
+                    side.appendChild(windowsDiv);
+                }
+                building.appendChild(side);
+            }
+            return building;
+        }
+        // Generate city layers
+        const layerBack = document.querySelector('.layer-back');
+        const layerMid = document.querySelector('.layer-mid');
+        const layerFront = document.querySelector('.layer-front');
+        backBuildings.forEach((config, index) => {
+            layerBack.appendChild(createBuilding(config, index + 1000));
+        });
+        midBuildings.forEach((config, index) => {
+            layerMid.appendChild(createBuilding(config, index + 2000));
+        });
+        frontBuildings.forEach((config, index) => {
+            const building = createBuilding(config, index + 3000);
+            layerFront.appendChild(building);
+        });
+        // Rain effect with layered depth
+        function createRain() {
+            if (document.querySelectorAll('.rain').length > 150) return;
+            const rain = document.createElement('div');
+            rain.className = 'rain';
+            rain.style.left = Math.random() * 100 + '%';
+            
+            // Randomly assign rain to different layers
+            const rand = Math.random();
+            let duration;
+            
+            if (rand < 0.3) {
+                // Background rain - slower
+                rain.classList.add('background');
+                duration = 2.5;
+            } else if (rand < 0.7) {
+                // Middle rain - medium speed
+                duration = 2.0;
+            } else {
+                // Foreground rain - faster
+                rain.classList.add('foreground');
+                duration = 1.5;
+            }
+            
+            rain.style.animation = `rainfall ${duration}s linear`;
+            document.querySelector('.scene').appendChild(rain);
+            setTimeout(() => rain.remove(), duration * 1000);
+        }
+        setInterval(createRain, 50);
+    </script>
+</body>
+</html>
