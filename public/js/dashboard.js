@@ -16,28 +16,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Filter transactions for this specific account
             const accountTransactions = transactions.filter(t => t.account_id == acc.id);
             
-            // Calculate totals for specific categories
+            // Calculate totals for categories
             const totals = {
                 fuel: 0,
                 food: 0,
                 travel: 0,
-                groceries: 0
+                groceries: 0,
+                other: 0
             };
+
+            let grandTotal = 0;
 
             accountTransactions.forEach(t => {
                 const amt = parseFloat(t.amount);
-                // Only count positive spending (not deposits which are negative)
-                if (amt > 0 && totals.hasOwnProperty(t.category)) {
-                    totals[t.category] += amt;
+                // Only count positive spending
+                if (amt > 0) {
+                    const cat = totals.hasOwnProperty(t.category) ? t.category : 'other';
+                    totals[cat] += amt;
+                    grandTotal += amt;
                 }
             });
-
-            // Calculate a max for scaling bars (highest category or at least 1)
-            const maxSpent = Math.max(...Object.values(totals), 1);
 
             const card = document.createElement('div');
             card.className = 'account-card';
             card.dataset.id = acc.id;
+
+            // Generate segments HTML based on proportions
+            let segmentsHtml = '';
+            for (const [category, amount] of Object.entries(totals)) {
+                if (amount > 0) {
+                    const percentage = (amount / grandTotal) * 100;
+                    // Only show text inside segment if it's large enough (e.g. > 10%)
+                    const showText = percentage > 10;
+                    segmentsHtml += `
+                        <div class="graph-segment color-${category}" style="width: ${percentage}%">
+                            <div class="segment-tooltip">${category.toUpperCase()}: $${amount.toFixed(2)}</div>
+                            ${showText ? `<span class="segment-value">$${amount.toFixed(0)}</span>` : ''}
+                        </div>
+                    `;
+                }
+            }
 
             card.innerHTML = `
                 <div class="account-header">
@@ -49,34 +67,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="account-balance-label">Spent / Limit</div>
                     </div>
                 </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: ${(totals.fuel / maxSpent) * 100}%;"></div>
-                        </div>
-                        <div class="category-label">Fuel</div>
-                        <div class="category-amount">$${totals.fuel.toFixed(0)}</div>
+                <div class="spending-graph-container">
+                    <div class="spending-graph">
+                        ${segmentsHtml || '<div style="width:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,200,100,0.3); font-size:0.8rem;">No Spending Data</div>'}
                     </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill food-bar" style="height: ${(totals.food / maxSpent) * 100}%;"></div>
-                        </div>
-                        <div class="category-label">Food</div>
-                        <div class="category-amount">$${totals.food.toFixed(0)}</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: ${(totals.travel / maxSpent) * 100}%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$${totals.travel.toFixed(0)}</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: ${(totals.groceries / maxSpent) * 100}%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$${totals.groceries.toFixed(0)}</div>
+                    <div class="graph-legend">
+                        <div class="legend-item"><div class="legend-color color-fuel"></div>Fuel</div>
+                        <div class="legend-item"><div class="legend-color color-food"></div>Food</div>
+                        <div class="legend-item"><div class="legend-color color-travel"></div>Travel</div>
+                        <div class="legend-item"><div class="legend-color color-groceries"></div>Groceries</div>
+                        <div class="legend-item"><div class="legend-color color-other"></div>Other</div>
                     </div>
                 </div>
             `;
