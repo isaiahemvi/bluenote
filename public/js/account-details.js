@@ -136,6 +136,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             merchantList.appendChild(item);
         });
 
+        // 5. Update Savings Recommendation
+        const savingsCard = document.getElementById('savingsCard');
+        const savingsAmount = document.getElementById('savingsAmount');
+        const savingsDetails = document.getElementById('savingsDetails');
+        const learnMoreBtn = document.getElementById('learnMoreBtn');
+
+        try {
+            const savingsRes = await fetch('/api/recommend-savings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accountId })
+            });
+
+            if (savingsRes.ok) {
+                const recommendation = await savingsRes.json();
+                savingsAmount.textContent = `$${recommendation.amount.toFixed(2)}`;
+                const savingsPeriod = savingsCard.querySelector('.savings-period');
+                if (savingsPeriod) savingsPeriod.textContent = 'in potential historical savings';
+                
+                savingsDetails.innerHTML = `<p>${recommendation.explanation}</p>`;
+                savingsCard.style.display = 'block';
+
+                learnMoreBtn.addEventListener('click', () => {
+                    const prompt = `I'm looking at my ${account.name} account and I see I could have saved $${recommendation.amount.toFixed(2)} in total historical ${recommendation.category} spending by switching to a card like ${recommendation.card}. Can you explain more about how this works and what other options I have?`;
+                    window.location.href = `ai-advisor.html?prompt=${encodeURIComponent(prompt)}`;
+                });
+            }
+        } catch (err) {
+            console.error('Error loading savings recommendation:', err);
+        }
+
     } catch (error) {
         console.error('Error loading account details:', error);
     }

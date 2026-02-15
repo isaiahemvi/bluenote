@@ -485,26 +485,22 @@
     <div class="details-container">
         <div class="account-header">
             <h1 class="account-title" id="accountTitle">Loading...</h1>
-            <div class="account-balance-header">
-                <span id="accountBalance">... / ...</span>
-                <span class="balance-labels">spent / limit</span>
-            </div>
+            <div class="account-balance-header" id="accountBalance">... / ...</div>
         </div>
 
         <div class="details-grid">
             <!-- Potential Savings -->
-            <div class="detail-card">
+            <div class="detail-card" id="savingsCard" style="display: none;">
                 <h2 class="card-title">Potential Savings</h2>
                 <div class="savings-content">
                     <div class="savings-highlight">
-                        <div class="savings-amount">$35/month</div>
-                        <div class="savings-period">in potential savings</div>
+                        <div class="savings-amount" id="savingsAmount">$0</div>
+                        <div class="savings-period" id="savingsPeriod">in potential savings</div>
                     </div>
-                    <div class="savings-details">
-                        <p>20% of this card's expenditures are spent on <span class="savings-category">travel</span>. Consider using your Citi card when you make <span class="savings-category">travel</span> purchases instead to save <span class="savings-green-highlight">over $30/month</span>.</p>
-                        <p>You can also consider signing up for Citi Plus card to save <span class="savings-green-highlight">over $35/month</span>.</p>
+                    <div class="savings-details" id="savingsDetails">
+                        <!-- Content will be injected dynamically by Gemini -->
                     </div>
-                    <div class="savings-cta">Learn More</div>
+                    <div class="savings-cta" id="learnMoreBtn">Learn More</div>
                 </div>
             </div>
 
@@ -585,146 +581,6 @@
             </div>
         </div>
     </div>
-    <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const accountId = urlParams.get('id');
-
-    const titleEl = document.getElementById('accountTitle');
-    const balanceEl = document.getElementById('accountBalance');
-    const transactionList = document.getElementById('transactionList');
-    const pieChart = document.getElementById('pieChart');
-    const pieLegend = document.getElementById('pieLegend');
-    const merchantList = document.getElementById('merchantList');
-
-    // Demo data
-    const accounts = [
-        { id: 1, name: 'Chase Sapphire Reserve', balance: 2847.50, limit: 10000 }
-    ];
-    
-    const allTransactions = [
-        { account_id: 1, amount: 450.00, category: 'fuel', merchant: 'Shell Gas Station' },
-        { account_id: 1, amount: 320.75, category: 'food', merchant: 'Chipotle' },
-        { account_id: 1, amount: 890.25, category: 'travel', merchant: 'United Airlines' },
-        { account_id: 1, amount: 625.50, category: 'groceries', merchant: 'Whole Foods' },
-        { account_id: 1, amount: 561.00, category: 'other', merchant: 'Amazon' },
-        { account_id: 1, amount: 125.00, category: 'food', merchant: 'Starbucks' },
-        { account_id: 1, amount: 85.50, category: 'fuel', merchant: 'BP Gas' },
-        { account_id: 1, amount: 215.00, category: 'groceries', merchant: 'Trader Joes' }
-    ];
-
-    const account = accounts.find(a => a.id == accountId);
-    if (!account) {
-        titleEl.textContent = "Chase Sapphire Reserve";
-        balanceEl.textContent = `$2847.50 / $10000`;
-    } else {
-        titleEl.textContent = account.name;
-        balanceEl.textContent = `$${account.balance} / $${account.limit}`;
-    }
-
-    // Filter transactions for this account
-    const transactions = allTransactions.filter(t => t.account_id == accountId || accountId === null || accountId == 1);
-
-    // 2. Update Recent Transactions
-    transactionList.innerHTML = '';
-    transactions.slice().reverse().forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'transaction-item';
-        item.innerHTML = `
-            <div class="transaction-info">
-                <div class="transaction-merchant">${t.merchant}</div>
-                <div class="transaction-date">${t.category.toUpperCase()}</div>
-            </div>
-            <div class="transaction-amount">$${Math.abs(parseFloat(t.amount)).toFixed(2)}</div>
-        `;
-        transactionList.appendChild(item);
-    });
-
-    // 3. Update Pie Chart & Legend
-    const totals = {
-        fuel: 0,
-        food: 0,
-        travel: 0,
-        groceries: 0,
-        other: 0
-    };
-    let grandTotal = 0;
-
-    transactions.forEach(t => {
-        const amt = parseFloat(t.amount);
-        if (amt > 0) {
-            const cat = totals.hasOwnProperty(t.category) ? t.category : 'other';
-            totals[cat] += amt;
-            grandTotal += amt;
-        }
-    });
-
-    pieLegend.innerHTML = '';
-    let conicGradient = 'conic-gradient(';
-    let currentAngle = 0;
-    
-    const colors = {
-        fuel: 'rgba(255, 200, 100, 0.9)',
-        food: 'rgba(255, 140, 66, 0.9)',
-        travel: 'rgba(77, 148, 255, 0.9)',
-        groceries: 'rgba(46, 184, 46, 0.9)',
-        other: 'rgba(179, 102, 255, 0.9)'
-    };
-
-    Object.entries(totals).forEach(([cat, amt]) => {
-        if (amt > 0) {
-            const percentage = (amt / grandTotal) * 100;
-            conicGradient += `${colors[cat]} ${currentAngle}% ${currentAngle + percentage}%, `;
-            currentAngle += percentage;
-
-            const legendItem = document.createElement('div');
-            legendItem.className = 'legend-item';
-            legendItem.innerHTML = `
-                <div class="legend-color" style="background: ${colors[cat]}"></div>
-                <span class="legend-text">${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
-                <span class="legend-amount">$${amt.toFixed(2)}</span>
-            `;
-            pieLegend.appendChild(legendItem);
-        }
-    });
-
-    if (grandTotal > 0) {
-        pieChart.style.background = conicGradient.slice(0, -2) + ')';
-    } else {
-        pieChart.style.background = 'rgba(255,255,255,0.1)';
-        pieLegend.innerHTML = '<div class="legend-text">No spending data available</div>';
-    }
-
-    // 4. Update Top Merchants
-    const merchants = {};
-    transactions.forEach(t => {
-        const amt = parseFloat(t.amount);
-        if (amt > 0) {
-            merchants[t.merchant] = (merchants[t.merchant] || 0) + amt;
-        }
-    });
-
-    const sortedMerchants = Object.entries(merchants)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 3);
-
-    merchantList.innerHTML = '';
-    const maxMerchantSpend = sortedMerchants.length > 0 ? sortedMerchants[0][1] : 1;
-
-    sortedMerchants.forEach(([name, amt]) => {
-        const item = document.createElement('div');
-        item.innerHTML = `
-            <div class="merchant-item">
-                <span class="merchant-name">${name}</span>
-                <span class="merchant-amount">$${amt.toFixed(2)}</span>
-            </div>
-            <div class="merchant-bar">
-                <div class="merchant-bar-fill" style="width: ${(amt / maxMerchantSpend) * 100}%;"></div>
-            </div>
-        `;
-        merchantList.appendChild(item);
-    });
-});
-    </script>
+    <script src="js/account-details.js"></script>
 </body>
 </html>
