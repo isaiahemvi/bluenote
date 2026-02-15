@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Details - Bluenote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 400;
+            color: rgba(255, 200, 100, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Italiana', sans-serif;
+            position: absolute;
+            left: 3rem;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .navbar-menu a {
+            color: rgba(255, 200, 100, 0.7);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-family: 'Italiana', serif;
+        }
+        .navbar-menu a:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            right: 3rem;
+            color: rgba(255, 200, 100, 0.7);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-family: 'Italiana', serif;
+            transition: color 0.3s ease;
+        }
+        .back-button:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+
+        /* Main Container */
+        .details-container {
+            flex: 1;
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Account Header */
+        .account-header {
+            margin-bottom: 2rem;
+        }
+
+        .account-title {
+            font-family: 'Italiana', serif;
+            font-size: 2.5rem;
+            color: rgba(255, 200, 100, 0.9);
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .account-balance-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: rgba(255, 200, 100, 1);
+            letter-spacing: 1px;
+        }
+
+        /* Grid Layout */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Card Styling */
+        .detail-card {
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(12, 12, 18, 0.9) 100%);
+            border: 1px solid rgba(255, 200, 100, 0.2);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-family: 'Italiana', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 200, 100, 0.9);
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        /* Pie Chart */
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                rgba(255, 200, 100, 0.9) 0% 40%,
+                rgba(255, 200, 100, 0.6) 40% 70%,
+                rgba(255, 200, 100, 0.3) 70% 100%
+            );
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-color.gas {
+            background: rgba(255, 200, 100, 0.9);
+        }
+
+        .legend-color.travel {
+            background: rgba(255, 200, 100, 0.6);
+        }
+
+        .legend-color.groceries {
+            background: rgba(255, 200, 100, 0.3);
+        }
+
+        .legend-text {
+            font-family: 'Italiana', serif;
+            color: rgba(255, 200, 100, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .legend-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            color: rgba(255, 200, 100, 1);
+            font-size: 1.1rem;
+            margin-left: auto;
+        }
+
+        /* Payment Due */
+        .payment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .payment-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.9rem;
+            color: rgba(255, 200, 100, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .payment-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: rgba(255, 200, 100, 1);
+        }
+
+        .payment-date {
+            font-family: 'Italiana', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 200, 100, 0.9);
+        }
+
+        /* Transaction History */
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 200, 100, 0.05);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 200, 100, 0.1);
+        }
+
+        .transaction-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .transaction-merchant {
+            font-family: 'Italiana', serif;
+            font-size: 1rem;
+            color: rgba(255, 200, 100, 0.9);
+        }
+
+        .transaction-date {
+            font-family: 'Italiana', serif;
+            font-size: 0.8rem;
+            color: rgba(255, 200, 100, 0.5);
+        }
+
+        .transaction-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            color: rgba(255, 200, 100, 1);
+        }
+
+        /* Top Merchants */
+        .merchant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .merchant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .merchant-name {
+            font-family: 'Italiana', serif;
+            font-size: 1rem;
+            color: rgba(255, 200, 100, 0.9);
+        }
+
+        .merchant-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 200, 100, 1);
+        }
+
+        .merchant-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 200, 100, 0.1);
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .merchant-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, rgba(255, 200, 100, 0.8), rgba(255, 200, 100, 0.4));
+            border-radius: 4px;
+        }
+
+        /* Spending Over Time Graph */
+        .full-width-card {
+            grid-column: 1 / -1;
+        }
+
+        .spending-graph {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 200px;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .month-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            height: 160px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .spending-bar {
+            width: 100%;
+            background: linear-gradient(to top, rgba(255, 200, 100, 0.8), rgba(255, 200, 100, 0.4));
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .spending-bar:hover {
+            background: linear-gradient(to top, rgba(255, 200, 100, 1), rgba(255, 200, 100, 0.6));
+        }
+
+        .month-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.75rem;
+            color: rgba(255, 200, 100, 0.6);
+            text-transform: uppercase;
+        }
+
+        /* Scrollbar Styling */
+        .transaction-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .transaction-list::-webkit-scrollbar-track {
+            background: rgba(255, 200, 100, 0.05);
+            border-radius: 4px;
+        }
+
+        .transaction-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 200, 100, 0.3);
+            border-radius: 4px;
+        }
+
+        .transaction-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 200, 100, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">Bluenote</div>
+        <ul class="navbar-menu">
+            <li><a href="bluenote.html">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+        <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
+    </nav>
+
+    <!-- Account Details -->
+    <div class="details-container">
+        <div class="account-header">
+            <h1 class="account-title">Rewards Card</h1>
+            <div class="account-balance-header">$1,284.56 / $5,000.00</div>
+        </div>
+
+        <div class="details-grid">
+            <!-- Spending Breakdown Pie Chart -->
+            <div class="detail-card">
+                <h2 class="card-title">Spending Breakdown</h2>
+                <div class="pie-chart-container">
+                    <div class="pie-chart"></div>
+                    <div class="pie-legend">
+                        <div class="legend-item">
+                            <div class="legend-color gas"></div>
+                            <span class="legend-text">Gas</span>
+                            <span class="legend-amount">$325</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color travel"></div>
+                            <span class="legend-text">Travel</span>
+                            <span class="legend-amount">$615</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color groceries"></div>
+                            <span class="legend-text">Groceries</span>
+                            <span class="legend-amount">$344</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Due Date -->
+            <div class="detail-card">
+                <h2 class="card-title">Payment Information</h2>
+                <div class="payment-info">
+                    <div>
+                        <div class="payment-label">Minimum Payment Due</div>
+                        <div class="payment-value">$35.00</div>
+                    </div>
+                    <div>
+                        <div class="payment-label">Due Date</div>
+                        <div class="payment-date">February 28, 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="detail-card">
+                <h2 class="card-title">Recent Transactions</h2>
+                <div class="transaction-list">
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Shell Gas Station</div>
+                            <div class="transaction-date">Feb 13, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$45.20</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Whole Foods Market</div>
+                            <div class="transaction-date">Feb 12, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$127.45</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Delta Airlines</div>
+                            <div class="transaction-date">Feb 10, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$285.00</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Chevron</div>
+                            <div class="transaction-date">Feb 9, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$52.80</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Trader Joe's</div>
+                            <div class="transaction-date">Feb 8, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$89.32</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-merchant">Uber</div>
+                            <div class="transaction-date">Feb 7, 2026</div>
+                        </div>
+                        <div class="transaction-amount">$24.15</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Merchants -->
+            <div class="detail-card">
+                <h2 class="card-title">Top Merchants</h2>
+                <div class="merchant-list">
+                    <div>
+                        <div class="merchant-item">
+                            <span class="merchant-name">Delta Airlines</span>
+                            <span class="merchant-amount">$615.00</span>
+                        </div>
+                        <div class="merchant-bar">
+                            <div class="merchant-bar-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="merchant-item">
+                            <span class="merchant-name">Whole Foods Market</span>
+                            <span class="merchant-amount">$344.20</span>
+                        </div>
+                        <div class="merchant-bar">
+                            <div class="merchant-bar-fill" style="width: 56%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="merchant-item">
+                            <span class="merchant-name">Shell Gas Station</span>
+                            <span class="merchant-amount">$325.36</span>
+                        </div>
+                        <div class="merchant-bar">
+                            <div class="merchant-bar-fill" style="width: 53%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spending Over Time -->
+            <div class="detail-card full-width-card">
+                <h2 class="card-title">Spending Over Time</h2>
+                <div class="spending-graph">
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 45%;"></div>
+                        </div>
+                        <div class="month-label">Aug</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 62%;"></div>
+                        </div>
+                        <div class="month-label">Sep</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 38%;"></div>
+                        </div>
+                        <div class="month-label">Oct</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 71%;"></div>
+                        </div>
+                        <div class="month-label">Nov</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 55%;"></div>
+                        </div>
+                        <div class="month-label">Dec</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 82%;"></div>
+                        </div>
+                        <div class="month-label">Jan</div>
+                    </div>
+                    <div class="month-bar">
+                        <div class="bar-wrapper">
+                            <div class="spending-bar" style="height: 68%;"></div>
+                        </div>
+                        <div class="month-label">Feb</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

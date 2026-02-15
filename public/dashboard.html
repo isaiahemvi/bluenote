@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bluenote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 400;
+            color: rgba(255, 200, 100, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Italiana', sans-serif;
+            position: absolute;
+            left: 3rem;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .navbar-menu a {
+            color: rgba(255, 200, 100, 0.7);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-family: 'Italiana', serif;
+        }
+        .navbar-menu a:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            flex: 1;
+            padding: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dashboard-title {
+            font-family: 'Italiana', serif;
+            font-size: 2.5rem;
+            color: rgba(255, 200, 100, 0.9);
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        /* Accounts List */
+        .accounts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Account Cards */
+        .account-card {
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(12, 12, 18, 0.9) 100%);
+            border: 1px solid rgba(255, 200, 100, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-card:hover {
+            border-color: rgba(255, 200, 100, 0.5);
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(255, 200, 100, 0.15);
+        }
+
+        .account-card.selected {
+            border-color: rgba(255, 200, 100, 0.7);
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.95) 0%, rgba(12, 12, 18, 1) 100%);
+            box-shadow: 0 0 20px rgba(255, 200, 100, 0.2);
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .account-type {
+            font-family: 'Italiana', serif;
+            font-size: 0.75rem;
+            color: rgba(255, 200, 100, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .account-name {
+            font-family: 'Italiana', serif;
+            font-size: 1.25rem;
+            color: rgba(255, 200, 100, 0.9);
+        }
+
+        .account-balance-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .account-balance {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: rgba(255, 200, 100, 1);
+            letter-spacing: 1px;
+        }
+
+        .account-balance-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.7rem;
+            color: rgba(255, 200, 100, 0.5);
+        }
+
+        /* Main Combined Account */
+        .main-account {
+            border: 2px solid rgba(255, 200, 100, 0.4);
+            background: linear-gradient(135deg, rgba(255, 200, 100, 0.08) 0%, rgba(18, 18, 26, 0.9) 100%);
+        }
+
+        .main-account .account-name {
+            font-size: 1.5rem;
+            color: rgba(255, 200, 100, 1);
+        }
+
+        .main-account .account-balance {
+            font-size: 2.2rem;
+        }
+
+        .main-account:hover {
+            border-color: rgba(255, 200, 100, 0.6);
+            box-shadow: 0 8px 32px rgba(255, 200, 100, 0.2);
+        }
+
+        /* Spending Graph */
+        .spending-graph {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 200, 100, 0.1);
+        }
+
+        .category-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 200, 100, 0.1);
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            width: 100%;
+            background: linear-gradient(to top, rgba(255, 200, 100, 0.8), rgba(255, 200, 100, 0.4));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease;
+        }
+
+        /* Category-specific colors */
+        .gas-bar {
+            background: linear-gradient(to top, rgba(255, 200, 100, 0.8), rgba(255, 200, 100, 0.4));
+        }
+
+        .travel-bar {
+            background: linear-gradient(to top, rgba(230, 230, 240, 0.8), rgba(230, 230, 240, 0.4));
+        }
+
+        .groceries-bar {
+            background: linear-gradient(to top, rgba(100, 150, 255, 0.8), rgba(100, 150, 255, 0.4));
+        }
+
+        .category-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.65rem;
+            color: rgba(255, 200, 100, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(255, 200, 100, 0.9);
+        }
+
+        /* Add Account Button */
+        .add-account-btn {
+            background: rgba(255, 200, 100, 1);
+            border: 1px solid rgba(255, 200, 100, 1);
+            border-radius: 0.75rem;
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Italiana', serif;
+            font-size: 1.25rem;
+            color: #050508;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .add-account-btn:hover {
+            background: rgba(255, 200, 100, 0.9);
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(255, 200, 100, 0.3);
+        }
+
+        .add-account-btn .plus-icon {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">Bluenote</div>
+        <ul class="navbar-menu">
+            <li><a href="bluenote.html">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container">
+        <h1 class="dashboard-title">Accounts</h1>
+        <div class="accounts-list">
+            <!-- Main Combined Account -->
+            <div class="account-card main-account" data-account="total">
+                <div class="account-header">
+                    <div class="account-info">
+                        <div class="account-name">Account Summary</div>
+                    </div>
+                    <div class="account-balance-section">
+                        <div class="account-balance">$5,291.06 / $21,000.00</div>
+                        <div class="account-balance-label">Spent / Limit</div>
+                    </div>
+                </div>
+                <div class="spending-graph">
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill gas-bar" style="height: 70%;"></div>
+                        </div>
+                        <div class="category-label">Gas</div>
+                        <div class="category-amount">$1,020</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill travel-bar" style="height: 85%;"></div>
+                        </div>
+                        <div class="category-label">Travel</div>
+                        <div class="category-amount">$1,833</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill groceries-bar" style="height: 60%;"></div>
+                        </div>
+                        <div class="category-label">Groceries</div>
+                        <div class="category-amount">$1,320</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-card" data-account="checking">
+                <div class="account-header">
+                    <div class="account-info">
+                        <div class="account-name">Main Checking</div>
+                    </div>
+                    <div class="account-balance-section">
+                        <div class="account-balance">$2,152.68 / $5,000.00</div>
+                        <div class="account-balance-label">Spent / Limit</div>
+                    </div>
+                </div>
+                <div class="spending-graph">
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill gas-bar" style="height: 65%;"></div>
+                        </div>
+                        <div class="category-label">Gas</div>
+                        <div class="category-amount">$420</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill travel-bar" style="height: 45%;"></div>
+                        </div>
+                        <div class="category-label">Travel</div>
+                        <div class="category-amount">$290</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill groceries-bar" style="height: 85%;"></div>
+                        </div>
+                        <div class="category-label">Groceries</div>
+                        <div class="category-amount">$548</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="account-card" data-account="savings">
+                <div class="account-header">
+                    <div class="account-info">
+                        <div class="account-name">Emergency Fund</div>
+                    </div>
+                    <div class="account-balance-section">
+                        <div class="account-balance">$1,477.00 / $10,000.00</div>
+                        <div class="account-balance-label">Spent / Limit</div>
+                    </div>
+                </div>
+                <div class="spending-graph">
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill gas-bar" style="height: 35%;"></div>
+                        </div>
+                        <div class="category-label">Gas</div>
+                        <div class="category-amount">$180</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill travel-bar" style="height: 75%;"></div>
+                        </div>
+                        <div class="category-label">Travel</div>
+                        <div class="category-amount">$850</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill groceries-bar" style="height: 40%;"></div>
+                        </div>
+                        <div class="category-label">Groceries</div>
+                        <div class="category-amount">$225</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="account-card" data-account="credit">
+                <div class="account-header">
+                    <div class="account-info">
+                        <div class="account-name">Rewards Card</div>
+                    </div>
+                    <div class="account-balance-section">
+                        <div class="account-balance">$1,284.56 / $5,000.00</div>
+                        <div class="account-balance-label">Spent / Limit</div>
+                    </div>
+                </div>
+                <div class="spending-graph">
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill gas-bar" style="height: 55%;"></div>
+                        </div>
+                        <div class="category-label">Gas</div>
+                        <div class="category-amount">$325</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill travel-bar" style="height: 90%;"></div>
+                        </div>
+                        <div class="category-label">Travel</div>
+                        <div class="category-amount">$615</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill groceries-bar" style="height: 48%;"></div>
+                        </div>
+                        <div class="category-label">Groceries</div>
+                        <div class="category-amount">$344</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="account-card" data-account="debit">
+                <div class="account-header">
+                    <div class="account-info">
+                        <div class="account-name">Everyday Spending</div>
+                    </div>
+                    <div class="account-balance-section">
+                        <div class="account-balance">$376.82 / $1,000.00</div>
+                        <div class="account-balance-label">Spent / Limit</div>
+                    </div>
+                </div>
+                <div class="spending-graph">
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill gas-bar" style="height: 30%;"></div>
+                        </div>
+                        <div class="category-label">Gas</div>
+                        <div class="category-amount">$95</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill travel-bar" style="height: 25%;"></div>
+                        </div>
+                        <div class="category-label">Travel</div>
+                        <div class="category-amount">$78</div>
+                    </div>
+                    <div class="category-bar">
+                        <div class="bar-container">
+                            <div class="bar-fill groceries-bar" style="height: 70%;"></div>
+                        </div>
+                        <div class="category-label">Groceries</div>
+                        <div class="category-amount">$203</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="add-account-btn">
+                <span class="plus-icon">+</span>
+                <span>Add Account</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Account card selection
+        const accountCards = document.querySelectorAll('.account-card');
+        accountCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Remove selected class from all cards
+                accountCards.forEach(c => c.classList.remove('selected'));
+                // Add selected class to clicked card
+                card.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>
