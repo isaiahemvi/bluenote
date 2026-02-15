@@ -82,8 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
 
             card.addEventListener('click', () => {
-                document.querySelectorAll('.account-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
+                window.location.href = `account-details.html?id=${acc.id}`;
             });
 
             container.insertBefore(card, addBtn);

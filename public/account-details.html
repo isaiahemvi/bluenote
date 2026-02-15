@@ -383,8 +383,8 @@
     <!-- Account Details -->
     <div class="details-container">
         <div class="account-header">
-            <h1 class="account-title">Rewards Card</h1>
-            <div class="account-balance-header">$1,284.56 / $5,000.00</div>
+            <h1 class="account-title" id="accountTitle">Loading...</h1>
+            <div class="account-balance-header" id="accountBalance">... / ...</div>
         </div>
 
         <div class="details-grid">
@@ -392,122 +392,26 @@
             <div class="detail-card">
                 <h2 class="card-title">Spending Breakdown</h2>
                 <div class="pie-chart-container">
-                    <div class="pie-chart"></div>
-                    <div class="pie-legend">
-                        <div class="legend-item">
-                            <div class="legend-color gas"></div>
-                            <span class="legend-text">Gas</span>
-                            <span class="legend-amount">$325</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color travel"></div>
-                            <span class="legend-text">Travel</span>
-                            <span class="legend-amount">$615</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color groceries"></div>
-                            <span class="legend-text">Groceries</span>
-                            <span class="legend-amount">$344</span>
-                        </div>
+                    <div class="pie-chart" id="pieChart"></div>
+                    <div class="pie-legend" id="pieLegend">
+                        <!-- Legend items will be injected here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Payment Due Date  #uncomment if we wanna work on this -->
-        <!---   <div class="detail-card">
-                <h2 class="card-title">Payment Information</h2>
-                <div class="payment-info">
-                    <div>
-                        <div class="payment-label">Minimum Payment Due</div>
-                        <div class="payment-value">$35.00</div>
-                    </div>
-                    <div>
-                        <div class="payment-label">Due Date</div>
-                        <div class="payment-date">February 28, 2026</div>
-                    </div>
-                </div>
-            </div> -->
-
             <!-- Transaction History -->
             <div class="detail-card">
                 <h2 class="card-title">Recent Transactions</h2>
-                <div class="transaction-list">
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Shell Gas Station</div>
-                            <div class="transaction-date">Feb 13, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$45.20</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Whole Foods Market</div>
-                            <div class="transaction-date">Feb 12, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$127.45</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Delta Airlines</div>
-                            <div class="transaction-date">Feb 10, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$285.00</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Chevron</div>
-                            <div class="transaction-date">Feb 9, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$52.80</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Trader Joe's</div>
-                            <div class="transaction-date">Feb 8, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$89.32</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <div class="transaction-merchant">Uber</div>
-                            <div class="transaction-date">Feb 7, 2026</div>
-                        </div>
-                        <div class="transaction-amount">$24.15</div>
-                    </div>
+                <div class="transaction-list" id="transactionList">
+                    <!-- Transactions will be injected here -->
                 </div>
             </div>
 
             <!-- Top Merchants -->
             <div class="detail-card">
                 <h2 class="card-title">Top Merchants</h2>
-                <div class="merchant-list">
-                    <div>
-                        <div class="merchant-item">
-                            <span class="merchant-name">Delta Airlines</span>
-                            <span class="merchant-amount">$615.00</span>
-                        </div>
-                        <div class="merchant-bar">
-                            <div class="merchant-bar-fill" style="width: 100%;"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="merchant-item">
-                            <span class="merchant-name">Whole Foods Market</span>
-                            <span class="merchant-amount">$344.20</span>
-                        </div>
-                        <div class="merchant-bar">
-                            <div class="merchant-bar-fill" style="width: 56%;"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="merchant-item">
-                            <span class="merchant-name">Shell Gas Station</span>
-                            <span class="merchant-amount">$325.36</span>
-                        </div>
-                        <div class="merchant-bar">
-                            <div class="merchant-bar-fill" style="width: 53%;"></div>
-                        </div>
-                    </div>
+                <div class="merchant-list" id="merchantList">
+                    <!-- Merchants will be injected here -->
                 </div>
             </div>
 
@@ -561,5 +465,6 @@
             </div>
         </div>
     </div>
+    <script src="js/account-details.js"></script>
 </body>
 </html>
