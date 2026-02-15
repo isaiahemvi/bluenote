@@ -1,10 +1,10 @@
-const { GoogleGenAI } = require("@google/genai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const redis = require("./valkeyClient");
 const { getBestCard } = require("./decisionEngine");
 
 // Initialize Gemini client
 // Ensure GEMINI_API_KEY is set in your environment
-const ai = new GoogleGenAI(process.env.GEMINI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 // Define the functions that Gemini can call
 const tools = [
@@ -53,19 +53,25 @@ const tools = [
 ];
 
 async function handleQuery(userQuery) {
-  const chat = ai.models.startChat({
+  const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash-exp",
     tools: tools,
   });
+  const chat = model.startChat();
 
   let result = await chat.sendMessage(userQuery);
   let response = result.response;
   
   // Handle function calls
-  // In gemini-2.0-flash-exp, function calls are in response.candidates[0].content.parts
+  // In @google/generative-ai, function calls are in response.candidates[0].content.parts
   while (response.candidates[0].content.parts.some(part => part.functionCall)) {
-    const part = response.candidates[0].content.parts.find(part => part.functionCall);
-    const functionCall = part.functionCall;
+    const parts = response.candidates[0].content.parts;
+    const functionCalls = parts.filter(part => part.functionCall);
+    
+    const functionResponses = [];
+
+    for (const callPart of functionCalls) {
+      const functionCall = callPart.functionCall;
     
     // Call your actual functions here that interact with Valkey
     let functionResponse;
@@ -79,18 +85,23 @@ async function handleQuery(userQuery) {
       );
     }
     
-    // Send function result back to Gemini
-    result = await chat.sendMessage([{
-      functionResponse: {
-        name: functionCall.name,
-        response: functionResponse
-      }
-    }]);
+      // Send function result back to Gemini
+      functionResponses.push({
+        functionResponse: {
+          name: functionCall.name,
+          response: functionResponse
+        }
+      });
+    }
+
+    result = await chat.sendMessage(functionResponses);
     response = result.response;
   }
   
   return response.text();
 }
+
+module.exports = { handleQuery };
 
 // Your Valkey interaction functions (implement these)
 async function getAccountBalance(accountNames) {

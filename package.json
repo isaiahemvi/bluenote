@@ -19,8 +19,9 @@
   },
   "homepage": "https://github.com/isaiahemvi/bluenote#readme",
   "dependencies": {
-    "@google/genai": "^1.41.0",
+    "@google/generative-ai": "^0.24.1",
     "csv-parser": "^3.2.0",
+    "express": "^5.2.1",
     "fs": "^0.0.1-security",
     "ioredis": "^5.9.3"
   }
