@@ -90,6 +90,58 @@
             color: rgba(255, 200, 100, 0.5);
         }
 
+        /* Message Card for Savings */
+        .detail-card {
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(12, 12, 18, 0.9) 100%);
+            border: 1px solid rgba(46, 184, 46, 0.4);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+        
+        .card-title {
+            font-family: 'Italiana', serif;
+            font-size: 1.2rem;
+            color: rgba(46, 184, 46, 1);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 200, 100, 0.1);
+        }
+
+        .savings-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .savings-highlight {
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .savings-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: rgba(46, 184, 46, 1);
+            letter-spacing: 1px;
+        }
+
+        .savings-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.8rem;
+            color: rgba(255, 200, 100, 0.6);
+        }
+
+        .savings-details {
+            font-family: 'Italiana', serif;
+            font-size: 1rem;
+            color: rgba(255, 200, 100, 0.9);
+            line-height: 1.5;
+            flex: 1;
+        }
+
         /* Messages Area */
         .messages-container {
             flex: 1;
@@ -316,14 +368,14 @@
         </div>
 
         <!-- Potential Savings Card (Visible on redirect) -->
-        <div class="detail-card" id="savingsCard" style="display: none; margin-bottom: 2rem; border: 1px solid rgba(46, 184, 46, 0.4); background: rgba(46, 184, 46, 0.05); padding: 1.5rem; border-radius: 0.75rem; backdrop-filter: blur(10px);">
-            <h2 class="card-title" style="color: rgba(46, 184, 46, 1); border-color: rgba(46, 184, 46, 0.2); font-family: 'Italiana', serif; font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,200,100,0.1); padding-bottom: 0.5rem;">Personalized Savings Opportunity</h2>
-            <div class="savings-content" style="display: flex; flex-direction: row; align-items: center; gap: 2rem;">
-                <div class="savings-highlight" style="min-width: 150px; text-align: center;">
-                    <div class="savings-amount" id="savingsAmount" style="font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: rgba(46, 184, 46, 1);">$0</div>
-                    <div style="font-family: 'Italiana', serif; font-size: 0.8rem; color: rgba(255,200,100,0.6);">Total Historical Savings</div>
+        <div class="detail-card" id="savingsCard" style="display: none;">
+            <h2 class="card-title">Personalized Savings Opportunity</h2>
+            <div class="savings-content">
+                <div class="savings-highlight">
+                    <div class="savings-amount" id="savingsAmount">$0</div>
+                    <div class="savings-label">Total Historical Savings</div>
                 </div>
-                <div class="savings-details" id="savingsDetails" style="flex: 1; font-family: 'Italiana', serif; font-size: 1rem; color: rgba(255,200,100,0.9); line-height: 1.5;">
+                <div class="savings-details" id="savingsDetails">
                     <!-- Content will be injected dynamically -->
                 </div>
             </div>
@@ -374,7 +426,7 @@
             localStorage.setItem('bluenote_session_id', sessionId);
         }
 
-        // Check for redirect prompt
+        // Check for autofill prompt
         const urlParams = new URLSearchParams(window.location.search);
         const autoPrompt = urlParams.get('prompt');
         if (autoPrompt) {
@@ -382,14 +434,14 @@
             const savingsAmount = document.getElementById('savingsAmount');
             const savingsDetails = document.getElementById('savingsDetails');
 
-            // Extraction logic
+            // Extraction patterns
             const amountMatch = autoPrompt.match(/saved \$([0-9.]+)/);
             const cardMatch = autoPrompt.match(/card like ([^.]+)/);
             const categoryMatch = autoPrompt.match(/historical ([^ ]+) spending/);
 
             if (amountMatch && cardMatch) {
                 savingsAmount.textContent = `$${amountMatch[1]}`;
-                savingsDetails.innerHTML = `<p>We found that switching your <strong>${categoryMatch ? categoryMatch[1] : 'spending'}</strong> to a <strong>${cardMatch[1]}</strong> could have accumulated <strong>$${amountMatch[1]}</strong> in extra rewards. I'm currently analyzing how you can achieve this.</p>`;
+                savingsDetails.innerHTML = `<p>I detected that switching your <strong>${categoryMatch ? categoryMatch[1] : 'spending'}</strong> to a <strong>${cardMatch[1]}</strong> could have accumulated <strong>$${amountMatch[1]}</strong> in extra rewards. I'm ready to walk you through the switch.</p>`;
                 savingsCard.style.display = 'block';
             }
 

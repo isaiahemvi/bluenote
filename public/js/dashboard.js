@@ -10,6 +10,27 @@ function closeModal() {
     document.getElementById('addAccountForm').reset();
 }
 
+// Market best rates for potential savings calculation
+const MARKET_BEST_RATES = {
+    fuel: 4,
+    food: 4,
+    groceries: 6,
+    travel: 5,
+    other: 2
+};
+
+function calculatePotentialSavings(categoryTotals, currentCashback) {
+    let totalPotentialSavings = 0;
+    for (const [category, spend] of Object.entries(categoryTotals)) {
+        const currentRate = currentCashback[category] || 1;
+        const bestRate = MARKET_BEST_RATES[category] || 2;
+        if (bestRate > currentRate) {
+            totalPotentialSavings += (spend * (bestRate - currentRate)) / 100;
+        }
+    }
+    return totalPotentialSavings;
+}
+
 // Close modal when clicking outside
 document.getElementById('addAccountModal')?.addEventListener('click', function(e) {
     if (e.target === this) {
@@ -21,34 +42,27 @@ document.getElementById('addAccountModal')?.addEventListener('click', function(e
 document.getElementById('addAccountForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    // Get form values
-    const newAccount = {
-        name: document.getElementById('cardName').value,
-        nickname: document.getElementById('nickname').value || document.getElementById('cardName').value,
-        balance: parseFloat(document.getElementById('balance').value),
-        limit: parseFloat(document.getElementById('creditLimit').value),
-        cashback_fuel: parseFloat(document.getElementById('cashbackFuel').value),
-        cashback_food: parseFloat(document.getElementById('cashbackFood').value),
-        cashback_groceries: parseFloat(document.getElementById('cashbackGroceries').value),
-        cashback_travel: parseFloat(document.getElementById('cashbackTravel').value),
-        cashback_other: parseFloat(document.getElementById('cashbackOther').value)
+    const payload = {
+        cardName: document.getElementById('cardName').value,
+        nickname: document.getElementById('nickname').value,
+        creditLimit: document.getElementById('creditLimit').value,
+        balance: document.getElementById('balance').value,
+        cashbackFuel: document.getElementById('cashbackFuel').value,
+        cashbackFood: document.getElementById('cashbackFood').value,
+        cashbackGroceries: document.getElementById('cashbackGroceries').value,
+        cashbackTravel: document.getElementById('cashbackTravel').value,
+        cashbackOther: document.getElementById('cashbackOther').value
     };
     
     try {
-        // Post to API
         const response = await fetch('/api/accounts', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newAccount)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         
         if (response.ok) {
-            // Close modal
             closeModal();
-            
-            // Reload the page to show the new account
             window.location.reload();
         } else {
             console.error('Failed to add account:', await response.text());
@@ -64,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('accounts-container');
     const addBtn = document.querySelector('.add-account-btn');
     try {
-        // Fetch both accounts and transactions
         const [accRes, transRes] = await Promise.all([
             fetch('/api/accounts'),
             fetch('/api/transactions')
@@ -73,10 +86,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const transactions = await transRes.json();
         
         accounts.forEach(acc => {
-            // Filter transactions for this specific account
             const accountTransactions = transactions.filter(t => t.account_id == acc.id);
             
-            // Calculate totals for categories
             const totals = {
                 fuel: 0,
                 food: 0,
@@ -87,24 +98,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             let grandTotal = 0;
             accountTransactions.forEach(t => {
                 const amt = parseFloat(t.amount);
-                // Only count positive spending
                 if (amt > 0) {
                     const cat = totals.hasOwnProperty(t.category) ? t.category : 'other';
                     totals[cat] += amt;
                     grandTotal += amt;
                 }
             });
+
+            // Calculate Potential Savings for this specific card
+            const savings = calculatePotentialSavings(totals, acc.cashback || {});
             
             const card = document.createElement('div');
             card.className = 'account-card';
             card.dataset.id = acc.id;
             
-            // Generate segments HTML based on proportions
             let segmentsHtml = '';
             for (const [category, amount] of Object.entries(totals)) {
                 if (amount > 0) {
                     const percentage = (amount / grandTotal) * 100;
-                    // Only show text inside segment if it's large enough (e.g. > 10%)
                     const showText = percentage > 10;
                     segmentsHtml += `
                         <div class="graph-segment color-${category}" style="width: ${percentage}%">
@@ -119,6 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="account-header">
                     <div class="account-info">
                         <div class="account-name">${acc.name}</div>
+                        <div class="account-type" style="font-size: 0.7rem; color: rgba(255,200,100,0.5)">${acc.nickname || ''}</div>
                     </div>
                     <div class="account-balance-section">
                         <div class="account-balance">$${acc.balance} / $${acc.limit}</div>

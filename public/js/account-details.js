@@ -1,3 +1,24 @@
+// Shared Constants & Logic (Could be moved to a shared file later)
+const MARKET_BEST_RATES = {
+    fuel: 4,
+    food: 4,
+    groceries: 6,
+    travel: 5,
+    other: 2
+};
+
+function calculatePotentialSavings(categoryTotals, currentCashback) {
+    let totalPotentialSavings = 0;
+    for (const [category, spend] of Object.entries(categoryTotals)) {
+        const currentRate = currentCashback[category] || 1;
+        const bestRate = MARKET_BEST_RATES[category] || 2;
+        if (bestRate > currentRate) {
+            totalPotentialSavings += (spend * (bestRate - currentRate)) / 100;
+        }
+    }
+    return totalPotentialSavings;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const accountId = urlParams.get('id');
@@ -142,6 +163,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const savingsDetails = document.getElementById('savingsDetails');
         const learnMoreBtn = document.getElementById('learnMoreBtn');
 
+        // Calculate direct savings first for UI consistency
+        const historicalSavings = calculatePotentialSavings(totals, account.cashback || {});
+        savingsAmount.textContent = `$${historicalSavings.toFixed(2)}`;
+
         try {
             const savingsRes = await fetch('/api/recommend-savings', {
                 method: 'POST',
@@ -151,15 +176,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (savingsRes.ok) {
                 const recommendation = await savingsRes.json();
-                savingsAmount.textContent = `$${recommendation.amount.toFixed(2)}`;
-                const savingsPeriod = savingsCard.querySelector('.savings-period');
-                if (savingsPeriod) savingsPeriod.textContent = 'in potential historical savings';
                 
+                // Update text with Gemini's reasoning
                 savingsDetails.innerHTML = `<p>${recommendation.explanation}</p>`;
                 savingsCard.style.display = 'block';
 
                 learnMoreBtn.addEventListener('click', () => {
-                    const prompt = `I'm looking at my ${account.name} account and I see I could have saved $${recommendation.amount.toFixed(2)} in total historical ${recommendation.category} spending by switching to a card like ${recommendation.card}. Can you explain more about how this works and what other options I have?`;
+                    const prompt = `I'm looking at my ${account.name} account and I see I could have saved $${historicalSavings.toFixed(2)} in total historical ${recommendation.category} spending by switching to a card like ${recommendation.card}. Can you explain more about how this works and what other options I have?`;
                     window.location.href = `ai-advisor.html?prompt=${encodeURIComponent(prompt)}`;
                 });
             }
