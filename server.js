@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { handleQuery } = require('./chatbotLogic');
@@ -12,18 +13,14 @@ app.use(express.static('public'));
 app.post('/api/recommend-savings', async (req, res) => {
     try {
         const { accountId } = req.body;
-        
-        // 1. Get account data (including current cashback rates)
         const accountRaw = await redis.get(`account:${accountId}`);
         if (!accountRaw) return res.status(404).json({ error: 'Account not found' });
         const account = JSON.parse(accountRaw);
 
-        // 2. Get transactions for this account
         const transactionsRaw = await redis.get('transactions:list');
         const allTransactions = JSON.parse(transactionsRaw || '[]');
         const transactions = allTransactions.filter(t => t.account_id == accountId);
 
-        // 3. Analyze spending by category
         const spendingByCategory = {};
         transactions.forEach(t => {
             const amt = parseFloat(t.amount);
@@ -32,21 +29,20 @@ app.post('/api/recommend-savings', async (req, res) => {
             }
         });
 
-        // 4. Find top category
         const topCategory = Object.entries(spendingByCategory).sort((a,b) => b[1] - a[1])[0]?.[0] || 'other';
         const topSpend = spendingByCategory[topCategory] || 0;
 
-        // 5. Query Gemini for a recommendation and explanation
-        const { handleQuery } = require('./chatbotLogic');
-        const prompt = `Based on this real financial data for credit card "${account.name}":
-        Category: "${topCategory}"
-        User's Current Rate for this category: ${account.cashback[topCategory] || 1}%
-        Total Spending in this category: $${topSpend.toFixed(2)}
+        const currentRate = account.cashback[topCategory] || 1;
+        const prompt = `You are a financial analysis bot.
+        Account: "${account.name}"
+        Top Category: "${topCategory}"
+        Current Cashback Rate: ${currentRate}%
+        Total Spending: $${topSpend.toFixed(2)}
         
         Task:
-        1. Suggest a real-world credit card (e.g. Amex Gold, Chase Freedom, etc.) that has a HIGHER cashback rate for "${topCategory}".
-        2. Calculate the historical savings: (New Rate % - Old Rate %) * Total Spending.
-        3. Write a short, professional 2-sentence explanation of this specific benefit.
+        1. Suggest ONE real credit card that has a HIGHER cashback rate for "${topCategory}".
+        2. Calculate total historical savings: (Suggested Rate % - Current Rate %) * Total Spending.
+        3. Write a short explanation (2 sentences max) for the UI.
         
         Return ONLY valid JSON: {"amount": number, "card": string, "category": string, "explanation": string, "suggestedRate": number}`;
         
@@ -56,7 +52,7 @@ app.post('/api/recommend-savings', async (req, res) => {
             amount: topSpend * 0.02,
             card: "Citi Double Cash",
             category: topCategory,
-            explanation: `Switching to a card with better rewards for ${topCategory} could have saved you significantly.`
+            explanation: `Switching to a higher cashback card for ${topCategory} would have saved you money over your history.`
         };
 
         res.json(recommendation);
