@@ -54,7 +54,7 @@ const tools = [
 
 async function handleQuery(userQuery) {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-1.5-flash",
     tools: tools,
   });
   const chat = model.startChat();
