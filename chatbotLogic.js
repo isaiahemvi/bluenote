@@ -47,45 +47,71 @@ const tools = [
           },
           required: ["item", "amount"]
         }
+      },
+      {
+        name: "get_market_card_recommendations",
+        description: "Get the best credit cards available on the market for a specific category to compare against user cards",
+        parameters: {
+          type: "OBJECT",
+          properties: {
+            category: {
+              type: "STRING",
+              enum: ["fuel", "food", "groceries", "travel", "other"],
+              description: "The spending category to find market-leading cards for"
+            }
+          },
+          required: ["category"]
+        }
+      },
+      {
+        name: "get_financial_summary",
+        description: "Get a summary of the user's owned credit cards and their highest spending categories from historical transaction data",
+        parameters: {
+          type: "OBJECT",
+          properties: {}
+        }
       }
     ]
   }
 ];
 
-async function handleQuery(userQuery) {
+async function handleQuery(userQuery, history = []) {
   const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
     tools: tools,
+    systemInstruction: "You are Bluenote AI, a professional financial advisor. You have access to the user's real financial data. When you start a session or are asked about the user's status, use 'get_financial_summary' to see what cards they own and where they spend most. Use this context to provide personalized advice. Only use the 'get_market_card_recommendations' tool if the user explicitly asks about cards on the market, better cashback options, or card comparisons."
   });
-  const chat = model.startChat();
+
+  const chat = model.startChat({
+    history: history
+  });
 
   let result = await chat.sendMessage(userQuery);
   let response = result.response;
   
-  // Handle function calls
-  // In @google/generative-ai, function calls are in response.candidates[0].content.parts
   while (response.candidates[0].content.parts.some(part => part.functionCall)) {
     const parts = response.candidates[0].content.parts;
     const functionCalls = parts.filter(part => part.functionCall);
-    
     const functionResponses = [];
 
     for (const callPart of functionCalls) {
       const functionCall = callPart.functionCall;
-    
-    // Call your actual functions here that interact with Valkey
-    let functionResponse;
-    if (functionCall.name === "get_account_balance") {
-      functionResponse = await getAccountBalance(functionCall.args.account_names);
-    } else if (functionCall.name === "check_affordability") {
-      functionResponse = await checkAffordability(
-        functionCall.args.item,
-        functionCall.args.amount,
-        functionCall.args.category
-      );
-    }
-    
-      // Send function result back to Gemini
+      let functionResponse;
+
+      if (functionCall.name === "get_account_balance") {
+        functionResponse = await getAccountBalance(functionCall.args.account_names);
+      } else if (functionCall.name === "check_affordability") {
+        functionResponse = await checkAffordability(
+          functionCall.args.item,
+          functionCall.args.amount,
+          functionCall.args.category
+        );
+      } else if (functionCall.name === "get_market_card_recommendations") {
+        functionResponse = await getMarketCardRecommendations(functionCall.args.category);
+      } else if (functionCall.name === "get_financial_summary") {
+        functionResponse = await getFinancialSummary();
+      }
+      
       functionResponses.push({
         functionResponse: {
           name: functionCall.name,
@@ -98,7 +124,8 @@ async function handleQuery(userQuery) {
     response = result.response;
   }
   
-  return response.text();
+  const finalHistory = await chat.getHistory();
+  return { text: response.text(), updatedHistory: finalHistory };
 }
 
 module.exports = { handleQuery };
@@ -137,13 +164,69 @@ async function checkAffordability(item, amount, category = "other") {
       message: "You don't have enough available credit on any single card for this purchase."
     };
   }
-
+  
   return {
     can_afford: true,
     recommended_account: bestCard.name,
     cashback_rate: `${bestCard.rate}%`,
     available_after: `$${bestCard.available - amount}`,
     reason: `The ${bestCard.name} offers the best cashback (${bestCard.rate}%) for ${category} and has sufficient credit.`
+  };
+}
+
+async function getFinancialSummary() {
+  const accountKeys = await redis.keys('account:*');
+  const accounts = [];
+  for (const key of accountKeys) {
+    const data = await redis.get(key);
+    accounts.push(JSON.parse(data));
+  }
+
+  const transactionsData = await redis.get('transactions:list');
+  const transactions = JSON.parse(transactionsData || '[]');
+
+  const spendingByCategory = {};
+  transactions.forEach(t => {
+    const amt = parseFloat(t.amount);
+    if (amt > 0) {
+      spendingByCategory[t.category] = (spendingByCategory[t.category] || 0) + amt;
+    }
+  });
+
+  return {
+    owned_cards: accounts.map(a => ({ name: a.name, limit: a.limit, balance: a.balance })),
+    spending_breakdown: spendingByCategory,
+    top_category: Object.entries(spendingByCategory).sort((a,b) => b[1] - a[1])[0]?.[0] || 'none'
+  };
+}
+
+async function getMarketCardRecommendations(category = "other") {
+  const marketCards = {
+    fuel: [
+      { name: "Blue Cash Preferred", cashback: "3%", note: "No annual fee for first year" },
+      { name: "Costco Anywhere Visa", cashback: "4%", note: "Requires Costco membership" }
+    ],
+    food: [
+      { name: "American Express Gold", cashback: "4x Points", note: "Best for dining worldwide" },
+      { name: "Capital One SavorOne", cashback: "3%", note: "No annual fee" }
+    ],
+    groceries: [
+      { name: "Blue Cash Preferred", cashback: "6%", note: "Up to $6,000 per year" },
+      { name: "Amex Gold", cashback: "4x Points", note: "On up to $25k spend" }
+    ],
+    travel: [
+      { name: "Chase Sapphire Reserve", cashback: "3x Points", note: "Includes $300 travel credit" },
+      { name: "Capital One Venture X", cashback: "2x Miles", note: "Best value luxury travel" }
+    ],
+    other: [
+      { name: "Citi Double Cash", cashback: "2%", note: "1% when you buy, 1% when you pay" },
+      { name: "Chase Freedom Unlimited", cashback: "1.5%", note: "Good for all-around spend" }
+    ]
+  };
+
+  return {
+    category: category,
+    top_market_cards: marketCards[category] || marketCards.other
   };
 }
 

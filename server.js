@@ -11,9 +11,20 @@ app.use(express.static('public'));
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const { query } = req.body;
-        const response = await handleQuery(query);
-        res.json({ response });
+        const { query, sessionId } = req.body;
+        
+        // 1. Get History from Valkey
+        const historyKey = `chat:history:${sessionId || 'default'}`;
+        const historyRaw = await redis.get(historyKey);
+        let history = JSON.parse(historyRaw || '[]');
+
+        // 2. Handle Query with History
+        const { text, updatedHistory } = await handleQuery(query, history);
+
+        // 3. Save Updated History (last 20 parts to stay within limits)
+        await redis.set(historyKey, JSON.stringify(updatedHistory.slice(-20)), 'EX', 3600);
+
+        res.json({ response: text });
     } catch (error) {
         console.error('Chat error:', error);
         res.status(500).json({ response: 'Sorry, I encountered an error processing that request.' });

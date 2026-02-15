@@ -330,7 +330,7 @@
         <!-- Suggested Questions -->
         <div class="suggestions" id="suggestions">
             <div class="suggestion-chip">How can I reduce my spending?</div>
-            <div class="suggestion-chip">What's my biggest expense category?</div>
+            <div class="suggestion-chip">What credit cards on the market could get me more cashback?</div>
             <div class="suggestion-chip">Should I increase my credit limit?</div>
             <div class="suggestion-chip">Tips for saving money?</div>
         </div>
@@ -352,6 +352,13 @@
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const suggestions = document.querySelectorAll('.suggestion-chip');
+
+        // Simple Session ID generation
+        let sessionId = localStorage.getItem('bluenote_session_id');
+        if (!sessionId) {
+            sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('bluenote_session_id', sessionId);
+        }
 
         // Handle send button click
         sendButton.addEventListener('click', sendMessage);
@@ -385,7 +392,7 @@
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query })
+                    body: JSON.stringify({ query, sessionId })
                 });
                 
                 if (!response.ok) {
