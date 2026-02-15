@@ -288,6 +288,216 @@
             font-size: 1.5rem;
             font-weight: 300;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.98) 0%, rgba(12, 12, 18, 0.98) 100%);
+            border: 2px solid rgba(255, 200, 100, 0.3);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-family: 'Italiana', serif;
+            font-size: 2rem;
+            color: rgba(255, 200, 100, 0.9);
+            letter-spacing: 2px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 200, 100, 0.7);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Italiana', serif;
+            font-size: 0.9rem;
+            color: rgba(255, 200, 100, 0.8);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 200, 100, 0.3);
+            border-radius: 0.5rem;
+            color: rgba(255, 200, 100, 0.9);
+            font-family: 'Italiana', serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(255, 200, 100, 0.6);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(255, 200, 100, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 200, 100, 0.4);
+        }
+
+        .cashback-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 200, 100, 0.2);
+        }
+
+        .cashback-title {
+            font-family: 'Italiana', serif;
+            font-size: 1.2rem;
+            color: rgba(255, 200, 100, 0.8);
+            margin-bottom: 1rem;
+            letter-spacing: 1.5px;
+        }
+
+        .cashback-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .cashback-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cashback-label {
+            font-family: 'Italiana', serif;
+            font-size: 0.85rem;
+            color: rgba(255, 200, 100, 0.7);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        .percentage-input {
+            position: relative;
+        }
+
+        .percentage-input input {
+            padding-right: 2rem;
+        }
+
+        .percentage-symbol {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 200, 100, 0.5);
+            font-family: 'Italiana', serif;
+            pointer-events: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-family: 'Italiana', serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: rgba(255, 200, 100, 1);
+            color: #050508;
+            font-weight: 600;
+        }
+
+        .modal-btn.primary:hover {
+            background: rgba(255, 200, 100, 0.9);
+            box-shadow: 0 4px 16px rgba(255, 200, 100, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: transparent;
+            color: rgba(255, 200, 100, 0.7);
+            border: 1px solid rgba(255, 200, 100, 0.3);
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 200, 100, 0.1);
+            border-color: rgba(255, 200, 100, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .cashback-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -308,10 +518,107 @@
         <div class="accounts-list" id="accounts-container">
             <!-- Dynamic accounts will be injected here -->
             
-            <button class="add-account-btn">
+            <button class="add-account-btn" onclick="openModal()">
                 <span class="plus-icon">+</span>
                 <span>Add Account</span>
             </button>
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div class="modal-overlay" id="addAccountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Account</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="addAccountForm">
+                <div class="form-group">
+                    <label class="form-label">Card Name</label>
+                    <input type="text" class="form-input" id="cardName" placeholder="e.g., Chase Freedom" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nickname (Optional)</label>
+                    <input type="text" class="form-input" id="nickname" placeholder="e.g., Travel Card">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Credit Limit</label>
+                    <input type="number" class="form-input" id="creditLimit" placeholder="5000" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Balance</label>
+                    <input type="number" class="form-input" id="balance" placeholder="1250.50" step="0.01" required>
+                </div>
+
+                <div class="cashback-section">
+                    <h3 class="cashback-title">Cashback Percentages</h3>
+                    <div class="cashback-grid">
+                        <div class="cashback-item">
+                            <label class="cashback-label">
+                                <span class="category-icon color-fuel"></span>
+                                Fuel
+                            </label>
+                            <div class="percentage-input">
+                                <input type="number" class="form-input" id="cashbackFuel" placeholder="3.0" step="0.1" min="0" max="100" required>
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        </div>
+
+                        <div class="cashback-item">
+                            <label class="cashback-label">
+                                <span class="category-icon color-food"></span>
+                                Food
+                            </label>
+                            <div class="percentage-input">
+                                <input type="number" class="form-input" id="cashbackFood" placeholder="2.0" step="0.1" min="0" max="100" required>
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        </div>
+
+                        <div class="cashback-item">
+                            <label class="cashback-label">
+                                <span class="category-icon color-groceries"></span>
+                                Groceries
+                            </label>
+                            <div class="percentage-input">
+                                <input type="number" class="form-input" id="cashbackGroceries" placeholder="2.0" step="0.1" min="0" max="100" required>
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        </div>
+
+                        <div class="cashback-item">
+                            <label class="cashback-label">
+                                <span class="category-icon color-travel"></span>
+                                Travel
+                            </label>
+                            <div class="percentage-input">
+                                <input type="number" class="form-input" id="cashbackTravel" placeholder="5.0" step="0.1" min="0" max="100" required>
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        </div>
+
+                        <div class="cashback-item">
+                            <label class="cashback-label">
+                                <span class="category-icon color-other"></span>
+                                Other
+                            </label>
+                            <div class="percentage-input">
+                                <input type="number" class="form-input" id="cashbackOther" placeholder="1.0" step="0.1" min="0" max="100" required>
+                                <span class="percentage-symbol">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="modal-btn primary">Add Account</button>
+                </div>
+            </form>
         </div>
     </div>
 

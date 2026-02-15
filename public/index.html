@@ -17,8 +17,7 @@
         }
         body {
             min-height: 100vh;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
             background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
             display: flex;
             flex-direction: column;
@@ -33,10 +32,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: fixed;
-            top: 0;
+            position: relative;
             z-index: 1000;
-            background: rgba(5, 5, 8, 0.7);
         }
         .navbar-brand {
             font-size: 2rem;
@@ -137,25 +134,14 @@
                 padding: 1rem 1.5rem;
             }
         }
-        
-        /* Main container for dark section */
-        .dark-section {
-            width: 100%;
-            min-height: 100vh;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        
         /* Hero Section */
         .hero {
             width: 100%;
             max-width: 1200px;
             text-align: center;
-            padding: 10rem 2rem 4rem;
+            padding: 6rem 2rem 4rem;
             z-index: 100;
             position: relative;
-            margin: 0 auto;
         }
         .hero h1 {
             font-family: 'Italiana', serif;
@@ -238,7 +224,6 @@
             align-items: flex-end;
             justify-content: center;
             perspective: 1000px;
-            min-height: 50vh;
         }
 
         .city {
@@ -353,26 +338,26 @@
         /* Rain */
         .rain {
             position: absolute;
-            width: 0.1vmin;
+            width: 0.3vmin;
             height: 12vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.04));
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.06));
             top: -12vmin;
             will-change: transform;
             z-index: 1;
         }
         /* Background rain - smaller and slower */
         .rain.background {
-            width: 0.08vmin;
+            width: 0.2vmin;
             height: 10vmin;
             top: -10vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.03));
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.04));
         }
         /* Foreground rain - bigger and faster */
         .rain.foreground {
-            width: 0.18vmin;
+            width: 0.5vmin;
             height: 15vmin;
             top: -15vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.05));
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.08));
         }
         @keyframes rainfall {
             0% {
@@ -440,15 +425,6 @@
             50% { opacity: 0; }
             100% { opacity: 0; }
         }
-        
-        /* White section below */
-        .white-section {
-            width: 100%;
-            min-height: 100vh;
-            background: white;
-            position: relative;
-            z-index: 1001;
-        }
     </style>
 </head>
 <body>
@@ -474,46 +450,40 @@
         </ul>
     </nav>
     
-    <!-- Dark section with city and rain -->
-    <div class="dark-section">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Don't let money be a mystery.</h1>
-            <p>Track expenses, optimize cashback, and get AI-powered insights.</p>
-            <div class="hero-buttons">
-                <a href="#get-started" class="hero-btn primary">Get Started</a>
-                <a href="#login" class="hero-btn secondary">Log In</a>
-            </div>
-        </section>
-        
-        <!-- Lightning flash -->
-        <div class="lightning" id="lightning"></div>
-        
-        <div class="scene">
-            <!-- Rain behind hero -->
-            <div class="rain-back"></div>
-            
-            <!-- Fog layers -->
-            <div class="fog">
-                <div class="fog-layer"></div>
-                <div class="fog-layer"></div>
-                <div class="fog-layer"></div>
-                <div class="fog-layer"></div>
-            </div>
-            
-            <div class="city">
-                <div class="city-layer layer-back"></div>
-                <div class="city-layer layer-mid"></div>
-                <div class="city-layer layer-front"></div>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Don't let money be a mystery.</h1>
+        <p>Track expenses, optimize cashback, and get AI-powered insights.</p>
+        <div class="hero-buttons">
+            <a href="#get-started" class="hero-btn primary">Get Started</a>
+            <a href="#login" class="hero-btn secondary">Log In</a>
         </div>
-    </div>
-    
-    <!-- White section (visible only when scrolling down) -->
-    <section class="white-section">
-        <!-- Your content will go here -->
     </section>
     
+    <!-- Rain in front of hero -->
+    <div class="rain-front"></div>
+    
+    <!-- Lightning flash -->
+    <div class="lightning" id="lightning"></div>
+    
+    <div class="scene">
+        <!-- Rain behind hero -->
+        <div class="rain-back"></div>
+        
+        <!-- Fog layers -->
+        <div class="fog">
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+        </div>
+        
+        <div class="city">
+            <div class="city-layer layer-back"></div>
+            <div class="city-layer layer-mid"></div>
+            <div class="city-layer layer-front"></div>
+        </div>
+    </div>
     <script>
         // Seeded random number generator for consistent window states
         class SeededRandom {
@@ -625,36 +595,43 @@
         // Rain effect with layered depth
         function createRain() {
             const totalRain = document.querySelectorAll('.rain').length;
-            if (totalRain > 600) return;
+            if (totalRain > 200) return;
             
             const rain = document.createElement('div');
             rain.className = 'rain';
-            // Keep rain away from edges - spawn between 10% and 90% of screen width
-            rain.style.left = (10 + Math.random() * 80) + '%';
+            rain.style.left = Math.random() * 100 + '%';
             
-            // All rain goes in the back container (near buildings)
+            // Randomly assign rain to different layers and containers
             const rand = Math.random();
             let duration;
-            const container = document.querySelector('.rain-back');
+            let container;
             
-            if (rand < 0.3) {
-                // Background rain - slower
+            if (rand < 0.2) {
+                // Rain in front of hero - fastest and most visible
+                rain.classList.add('foreground');
+                duration = 1.2;
+                container = document.querySelector('.rain-front');
+            } else if (rand < 0.5) {
+                // Background rain behind hero - slower
                 rain.classList.add('background');
                 duration = 2.5;
-            } else if (rand < 0.7) {
-                // Middle rain - medium speed
+                container = document.querySelector('.rain-back');
+            } else if (rand < 0.75) {
+                // Middle rain behind hero - medium speed
                 duration = 2.0;
+                container = document.querySelector('.rain-back');
             } else {
-                // Foreground rain - faster
+                // Foreground rain behind hero - faster
                 rain.classList.add('foreground');
                 duration = 1.5;
+                container = document.querySelector('.rain-back');
             }
             
             rain.style.animation = `rainfall ${duration}s linear`;
             container.appendChild(rain);
             setTimeout(() => rain.remove(), duration * 1000);
         }
-        setInterval(createRain, 15);
+        setInterval(createRain, 50);
         
         // Mobile menu toggle
         function toggleMenu() {
