@@ -198,15 +198,6 @@
             border-color: rgba(255, 200, 100, 0.5);
         }
         /* Rain containers */
-        .rain-front {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 200;
-        }
         .rain-back {
             position: absolute;
             top: 0;
@@ -335,29 +326,29 @@
             background: rgba(20, 20, 30, 0.4);
             box-shadow: none;
         }
-        /* Rain */
+        /* Rain - Made thinner and faster */
         .rain {
             position: absolute;
-            width: 0.3vmin;
+            width: 0.15vmin;
             height: 12vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.06));
-            top: -12vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.03));
+            top: -5vmin;
             will-change: transform;
             z-index: 1;
         }
-        /* Background rain - smaller and slower */
+        /* Background rain - thinner and faster */
         .rain.background {
-            width: 0.2vmin;
+            width: 0.1vmin;
             height: 10vmin;
-            top: -10vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.04));
+            top: -4vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.02));
         }
-        /* Foreground rain - bigger and faster */
+        /* Foreground rain - thinner and faster */
         .rain.foreground {
-            width: 0.5vmin;
+            width: 0.25vmin;
             height: 15vmin;
-            top: -15vmin;
-            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.08));
+            top: -6vmin;
+            background: linear-gradient(to bottom, transparent, rgba(160, 180, 200, 0.04));
         }
         @keyframes rainfall {
             0% {
@@ -435,7 +426,7 @@
             <li><a href="index.html">Home</a></li>
             <li><a href="dashboard.html">Dashboard</a></li>
             <li><a href="ai-advisor.html">AI Advisor</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="about.html">About</a></li>
         </ul>
         <div class="hamburger" onclick="toggleMenu()">
             <span></span>
@@ -446,7 +437,7 @@
             <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
             <li><a href="dashboard.html" onclick="toggleMenu()">Dashboard</a></li>
             <li><a href="ai-advisor.html" onclick="toggleMenu()">AI Advisor</a></li>
-            <li><a href="#about" onclick="toggleMenu()">About</a></li>
+            <li><a href="about.html" onclick="toggleMenu()">About</a></li>
         </ul>
     </nav>
     
@@ -459,9 +450,6 @@
             <a href="#login" class="hero-btn secondary">Log In</a>
         </div>
     </section>
-    
-    <!-- Rain in front of hero -->
-    <div class="rain-front"></div>
     
     <!-- Lightning flash -->
     <div class="lightning" id="lightning"></div>
@@ -592,46 +580,38 @@
             const building = createBuilding(config, index + 3000);
             layerFront.appendChild(building);
         });
-        // Rain effect with layered depth
+        // Rain effect with layered depth - Only behind hero
         function createRain() {
             const totalRain = document.querySelectorAll('.rain').length;
-            if (totalRain > 200) return;
+            if (totalRain > 1000) return;
             
             const rain = document.createElement('div');
             rain.className = 'rain';
             rain.style.left = Math.random() * 100 + '%';
             
-            // Randomly assign rain to different layers and containers
+            // All rain goes behind hero in rain-back container
             const rand = Math.random();
             let duration;
-            let container;
+            let container = document.querySelector('.rain-back');
             
-            if (rand < 0.2) {
-                // Rain in front of hero - fastest and most visible
-                rain.classList.add('foreground');
-                duration = 1.2;
-                container = document.querySelector('.rain-front');
-            } else if (rand < 0.5) {
-                // Background rain behind hero - slower
+            if (rand < 0.3) {
+                // Background rain - slower
                 rain.classList.add('background');
-                duration = 2.5;
-                container = document.querySelector('.rain-back');
-            } else if (rand < 0.75) {
-                // Middle rain behind hero - medium speed
-                duration = 2.0;
-                container = document.querySelector('.rain-back');
+                duration = 3.5;
+            } else if (rand < 0.65) {
+                // Middle rain - medium speed
+                duration = 2.8;
             } else {
-                // Foreground rain behind hero - faster
+                // Foreground rain - faster
                 rain.classList.add('foreground');
-                duration = 1.5;
-                container = document.querySelector('.rain-back');
+                duration = 2.2;
             }
             
             rain.style.animation = `rainfall ${duration}s linear`;
             container.appendChild(rain);
             setTimeout(() => rain.remove(), duration * 1000);
         }
-        setInterval(createRain, 50);
+        setInterval(createRain, 20);
         
         // Mobile menu toggle
         function toggleMenu() {

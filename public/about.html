@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Bluenote</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Italiana&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
+            overflow-x: hidden;
+        }
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 400;
+            color: rgba(255, 200, 100, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Italiana', sans-serif;
+            position: absolute;
+            left: 3rem;
+        }
+        .navbar-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .navbar-menu a {
+            color: rgba(255, 200, 100, 0.7);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            font-family: 'Italiana', serif;
+            white-space: nowrap;
+        }
+        .navbar-menu a:hover {
+            color: rgba(255, 200, 100, 1);
+        }
+        .navbar-menu a.active {
+            color: rgba(255, 200, 100, 1);
+        }
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 3rem;
+            padding: 0.5rem;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: rgba(255, 200, 100, 0.7);
+            transition: all 0.3s ease;
+        }
+        .hamburger:hover span {
+            background: rgba(255, 200, 100, 1);
+        }
+        /* Mobile Menu */
+        .navbar-menu.mobile {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(5, 5, 8, 0.95);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            gap: 0;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 200, 100, 0.2);
+        }
+        .navbar-menu.mobile li {
+            padding: 1rem 3rem;
+            text-align: center;
+        }
+        .navbar-menu.mobile.active {
+            display: flex;
+        }
+        @media (max-width: 850px) {
+            .navbar {
+                padding: 1.5rem 2rem;
+            }
+            .navbar-brand {
+                left: 2rem;
+                font-size: 1.7rem;
+            }
+            .navbar-menu.desktop {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+                right: 2rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 1.5rem 1.5rem;
+            }
+            .navbar-brand {
+                left: 1.5rem;
+                font-size: 1.5rem;
+            }
+            .hamburger {
+                right: 1.5rem;
+            }
+            .navbar-menu.mobile li {
+                padding: 1rem 1.5rem;
+            }
+        }
+        /* About Content */
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            color: rgba(255, 200, 100, 0.8);
+        }
+        .about-content h2 {
+            font-family: 'Italiana', serif;
+            font-size: 3rem;
+            color: rgba(255, 200, 100, 0.9);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        .about-content h3 {
+            font-family: 'Italiana', serif;
+            font-size: 1.8rem;
+            color: rgba(255, 200, 100, 0.9);
+            margin: 2rem 0 1rem;
+            letter-spacing: 2px;
+        }
+        .about-content p {
+            font-family: 'Italiana', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 200, 100, 0.7);
+        }
+        .about-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 1rem 0 2rem;
+        }
+        .about-content ul li {
+            font-family: 'Italiana', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 200, 100, 0.7);
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .about-content ul li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: rgba(255, 200, 100, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">Bluenote</div>
+        <ul class="navbar-menu desktop">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="ai-advisor.html">AI Advisor</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="navbar-menu mobile" id="mobileMenu">
+            <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+            <li><a href="dashboard.html" onclick="toggleMenu()">Dashboard</a></li>
+            <li><a href="ai-advisor.html" onclick="toggleMenu()">AI Advisor</a></li>
+            <li><a href="about.html" onclick="toggleMenu()" class="active">About</a></li>
+        </ul>
+    </nav>
+    
+    <!-- About Content -->
+    <div class="about-content">
+        <h2>About Bluenote</h2>
+        
+        <p>At our core, we help you track your credit balances and spending across cards. We give you competitive tools to assist with budgeting decisions, and we recommend better credit cards based on actual spending habits to save you money.</p>
+        
+        <p>Instead of simply logging transactions, Bluenote analyzes user behavior and provides actionable financial insights. The integrated AI advisor evaluates affordability, suggests the most rewarding card for a purchase category, and highlights potential "lost savings" from suboptimal cashback usage.</p>
+        
+        <h3>How we built it</h3>
+        <p>The project was developed in two largely independent halves:</p>
+        <ul>
+            <li>Frontend: A responsive, interactive, and thematic browser interface built with vanilla JavaScript, HTML, and CSS.</li>
+            <li>Backend: A Node.js + Express server handling business logic, AI orchestration, and database access.</li>
+        </ul>
+        <p>These two halves were later merged together through API endpoints. Integration was significantly accelerated by using Google Gemini in an agentic development workflow via Roo Code, which helped us debug issues, and fill our knowledge gaps.</p>
+        
+        <h3>Challenges we ran into</h3>
+        <ul>
+            <li>API Integration: None of us had prior experience implementing external AI APIs, so learning authentication, request formatting, and error handling under time pressure was difficult.</li>
+            <li>Brainstorming Under Time Constraints: Early ideation was chaotic, and converging on a unified vision took longer than expected.</li>
+            <li>Iteration Discipline: We occasionally departed from ideal development practices, which made it harder to retrace steps when bugs appeared.</li>
+            <li>First-Time Technologies: Docker, Valkey, and AI function calling all introduced steep learning curves simultaneously.</li>
+        </ul>
+        
+        <h3>Accomplishments that we're proud of</h3>
+        <ul>
+            <li>Building our first AI-integrated full-stack application</li>
+            <li>Delivering a unique and visually distinctive concept</li>
+            <li>Successfully integrating live data with AI decision-making</li>
+            <li>Two of our three team members completing their first hackathon project</li>
+            <li>Creating a working prototype that goes beyond tracking into active optimization</li>
+        </ul>
+        
+        <h3>What we learned</h3>
+        <ul>
+            <li>Practical use of Node.js and Express for backend services</li>
+            <li>How to integrate and constrain AI APIs for reliable outputs</li>
+            <li>Applying agentic AI tools to accelerate software development</li>
+            <li>Containerization basics with Docker</li>
+            <li>The importance of structured iteration and version control in collaborative projects</li>
+        </ul>
+        
+        <h3>What's next for Bluenote</h3>
+        <p>Future development goals include:</p>
+        <ul>
+            <li>Transaction editing and deletion</li>
+            <li>Expanded chatbot question coverage and financial reasoning</li>
+            <li>TLS encryption for secure communication</li>
+            <li>Access Control Lists (ACLs) to support multiple users</li>
+            <li>Transitioning to a fully multi-user client-server architecture with shared database access</li>
+            <li>Improved financial data ingestion and categorization</li>
+        </ul>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
