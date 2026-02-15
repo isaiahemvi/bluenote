@@ -58,9 +58,163 @@
             letter-spacing: 1px;
             transition: color 0.3s ease;
             font-family: 'Italiana', serif;
+            white-space: nowrap;
         }
         .navbar-menu a:hover {
             color: rgba(255, 200, 100, 1);
+        }
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 3rem;
+            padding: 0.5rem;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: rgba(255, 200, 100, 0.7);
+            transition: all 0.3s ease;
+        }
+        .hamburger:hover span {
+            background: rgba(255, 200, 100, 1);
+        }
+        /* Mobile Menu */
+        .navbar-menu.mobile {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(5, 5, 8, 0.95);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            gap: 0;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 200, 100, 0.2);
+        }
+        .navbar-menu.mobile li {
+            padding: 1rem 3rem;
+            text-align: center;
+        }
+        .navbar-menu.mobile.active {
+            display: flex;
+        }
+        @media (max-width: 850px) {
+            .navbar {
+                padding: 1.5rem 2rem;
+            }
+            .navbar-brand {
+                left: 2rem;
+                font-size: 1.7rem;
+            }
+            .navbar-menu.desktop {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+                right: 2rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 1.5rem 1.5rem;
+            }
+            .navbar-brand {
+                left: 1.5rem;
+                font-size: 1.5rem;
+            }
+            .hamburger {
+                right: 1.5rem;
+            }
+            .navbar-menu.mobile li {
+                padding: 1rem 1.5rem;
+            }
+        }
+        /* Hero Section */
+        .hero {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            z-index: 100;
+            position: relative;
+        }
+        .hero h1 {
+            font-family: 'Italiana', serif;
+            font-size: 4.5rem;
+            font-weight: 400;
+            color: rgba(255, 200, 100, 0.9);
+            letter-spacing: 4px;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+        .hero p {
+            font-family: 'Italiana', serif;
+            font-size: 1.4rem;
+            color: rgba(255, 200, 100, 0.6);
+            letter-spacing: 2px;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-btn {
+            padding: 1rem 2.5rem;
+            font-family: 'Italiana', serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-decoration: none;
+            border-radius: 0.3rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+        }
+        .hero-btn.primary {
+            background: rgba(255, 200, 100, 0.15);
+            color: rgba(255, 200, 100, 0.9);
+            border: 2px solid rgba(255, 200, 100, 0.4);
+        }
+        .hero-btn.primary:hover {
+            background: rgba(255, 200, 100, 0.25);
+            border-color: rgba(255, 200, 100, 0.7);
+            box-shadow: 0 0 20px rgba(255, 200, 100, 0.3);
+        }
+        .hero-btn.secondary {
+            background: transparent;
+            color: rgba(255, 200, 100, 0.7);
+            border: 2px solid rgba(255, 200, 100, 0.3);
+        }
+        .hero-btn.secondary:hover {
+            background: rgba(255, 200, 100, 0.1);
+            border-color: rgba(255, 200, 100, 0.5);
+        }
+        /* Rain containers */
+        .rain-front {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 200;
+        }
+        .rain-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
         .scene {
             width: 100vw;
@@ -251,20 +405,71 @@
             opacity: 0.5;
             background: radial-gradient(ellipse at center, rgba(110, 120, 140, 0.13) 0%, transparent 70%);
         }
+        /* Lightning flash */
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(160, 180, 220, 0.08);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+        @keyframes lightning-flash {
+            0% { opacity: 0; }
+            30% { opacity: 1; }
+            35% { opacity: 0; }
+            45% { opacity: 0.6; }
+            50% { opacity: 0; }
+            100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="navbar-brand">Bluenote</div>
-        <ul class="navbar-menu">
+        <ul class="navbar-menu desktop">
             <li><a href="index.html">Home</a></li>
             <li><a href="dashboard.html">Dashboard</a></li>
             <li><a href="ai-advisor.html">AI Advisor</a></li>
             <li><a href="#about">About</a></li>
         </ul>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="navbar-menu mobile" id="mobileMenu">
+            <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+            <li><a href="dashboard.html" onclick="toggleMenu()">Dashboard</a></li>
+            <li><a href="ai-advisor.html" onclick="toggleMenu()">AI Advisor</a></li>
+            <li><a href="#about" onclick="toggleMenu()">About</a></li>
+        </ul>
     </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Don't let money be a mystery.</h1>
+        <p>Track expenses, optimize cashback, and get AI-powered insights.</p>
+        <div class="hero-buttons">
+            <a href="#get-started" class="hero-btn primary">Get Started</a>
+            <a href="#login" class="hero-btn secondary">Log In</a>
+        </div>
+    </section>
+    
+    <!-- Rain in front of hero -->
+    <div class="rain-front"></div>
+    
+    <!-- Lightning flash -->
+    <div class="lightning" id="lightning"></div>
+    
     <div class="scene">
+        <!-- Rain behind hero -->
+        <div class="rain-back"></div>
+        
         <!-- Fog layers -->
         <div class="fog">
             <div class="fog-layer"></div>
@@ -389,33 +594,67 @@
         });
         // Rain effect with layered depth
         function createRain() {
-            if (document.querySelectorAll('.rain').length > 150) return;
+            const totalRain = document.querySelectorAll('.rain').length;
+            if (totalRain > 200) return;
+            
             const rain = document.createElement('div');
             rain.className = 'rain';
             rain.style.left = Math.random() * 100 + '%';
             
-            // Randomly assign rain to different layers
+            // Randomly assign rain to different layers and containers
             const rand = Math.random();
             let duration;
+            let container;
             
-            if (rand < 0.3) {
-                // Background rain - slower
+            if (rand < 0.2) {
+                // Rain in front of hero - fastest and most visible
+                rain.classList.add('foreground');
+                duration = 1.2;
+                container = document.querySelector('.rain-front');
+            } else if (rand < 0.5) {
+                // Background rain behind hero - slower
                 rain.classList.add('background');
                 duration = 2.5;
-            } else if (rand < 0.7) {
-                // Middle rain - medium speed
+                container = document.querySelector('.rain-back');
+            } else if (rand < 0.75) {
+                // Middle rain behind hero - medium speed
                 duration = 2.0;
+                container = document.querySelector('.rain-back');
             } else {
-                // Foreground rain - faster
+                // Foreground rain behind hero - faster
                 rain.classList.add('foreground');
                 duration = 1.5;
+                container = document.querySelector('.rain-back');
             }
             
             rain.style.animation = `rainfall ${duration}s linear`;
-            document.querySelector('.scene').appendChild(rain);
+            container.appendChild(rain);
             setTimeout(() => rain.remove(), duration * 1000);
         }
         setInterval(createRain, 50);
+        
+        // Mobile menu toggle
+        function toggleMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+        
+        // Lightning strike effect
+        function triggerLightning() {
+            const lightning = document.getElementById('lightning');
+            lightning.style.animation = 'lightning-flash 0.6s ease-out';
+            
+            setTimeout(() => {
+                lightning.style.animation = '';
+            }, 600);
+            
+            // Schedule next lightning strike randomly between 8-25 seconds
+            const nextStrike = Math.random() * 17000 + 8000;
+            setTimeout(triggerLightning, nextStrike);
+        }
+        
+        // Start the lightning cycle after initial delay
+        setTimeout(triggerLightning, Math.random() * 10000 + 5000);
     </script>
 </body>
 </html>
