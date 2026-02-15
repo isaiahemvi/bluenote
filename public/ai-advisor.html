@@ -18,7 +18,7 @@
             background: linear-gradient(to bottom, #050508 0%, #0a0a0f 50%, #000000 100%);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
         }
         
         /* Navigation Bar */
@@ -300,9 +300,9 @@
         <div class="navbar-brand">Bluenote</div>
         <ul class="navbar-menu">
             <li><a href="index.html">Home</a></li>
+            <li><a href="#about">About</a></li>
             <li><a href="dashboard.html">Dashboard</a></li>
             <li><a href="ai-advisor.html">AI Advisor</a></li>
-            <li><a href="#about">About</a></li>
         </ul>
     </nav>
 
@@ -369,24 +369,35 @@
             });
         });
 
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message) return;
+        async function sendMessage() {
+            const query = messageInput.value.trim();
+            if (!query) return;
 
             // Add user message
-            addMessage(message, 'user');
+            addMessage(query, 'user');
             messageInput.value = '';
 
-            // Simulate AI typing
-            setTimeout(() => {
-                addTypingIndicator();
+            addTypingIndicator();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
                 
-                // Simulate AI response after delay
-                setTimeout(() => {
-                    removeTypingIndicator();
-                    addMessage(getAIResponse(message), 'ai');
-                }, 2000);
-            }, 500);
+                if (!response.ok) {
+                    throw new Error('Failed to connect to the advisor');
+                }
+
+                const data = await response.json();
+                removeTypingIndicator();
+                addMessage(data.response, 'ai');
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage("I'm sorry, I'm having trouble connecting right now. Please try again later.", 'ai');
+                console.error('Chat error:', error);
+            }
         }
 
         function addMessage(text, sender) {
@@ -448,24 +459,6 @@
             }
         }
 
-        function getAIResponse(userMessage) {
-            // Placeholder responses - this would be replaced with actual Gemini API
-            const responses = {
-                'how can i reduce my spending': "Based on your spending patterns, I notice you're spending the most on groceries and travel. Consider meal planning to reduce grocery costs and look for travel rewards programs to maximize your benefits.",
-                'what\'s my biggest expense category': "Your biggest expense category is Travel at $615 this month on your Rewards Card, followed by Groceries at $548 on your Main Checking account.",
-                'should i increase my credit limit': "Your current utilization is around 25% across your cards, which is good. However, if you're planning large purchases, increasing your limit on the Rewards Card could help maintain a healthy credit utilization ratio.",
-                'tips for saving money': "Here are some tips: 1) Set up automatic transfers to savings, 2) Use the 50/30/20 budgeting rule, 3) Track your daily expenses, 4) Take advantage of cashback on your Rewards Card for planned purchases."
-            };
-            
-            const lowerMessage = userMessage.toLowerCase();
-            for (const [key, response] of Object.entries(responses)) {
-                if (lowerMessage.includes(key)) {
-                    return response;
-                }
-            }
-            
-            return "That's a great question! While I'm still learning about your spending habits, I recommend reviewing your transaction history and setting monthly budgets for each category. Would you like me to analyze any specific aspect of your finances?";
-        }
     </script>
 </body>
 </html>
