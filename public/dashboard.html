@@ -273,7 +273,7 @@
     <nav class="navbar">
         <div class="navbar-brand">Bluenote</div>
         <ul class="navbar-menu">
-            <li><a href="bluenote.html">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="dashboard.html">Dashboard</a></li>
         </ul>
@@ -282,183 +282,9 @@
     <!-- Dashboard -->
     <div class="dashboard-container">
         <h1 class="dashboard-title">Accounts</h1>
-        <div class="accounts-list">
-            <!-- Main Combined Account -->
-            <div class="account-card main-account" data-account="total">
-                <div class="account-header">
-                    <div class="account-info">
-                        <div class="account-name">Account Summary</div>
-                    </div>
-                    <div class="account-balance-section">
-                        <div class="account-balance">$5,291.06 / $21,000.00</div>
-                        <div class="account-balance-label">Spent / Limit</div>
-                    </div>
-                </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: 70%;"></div>
-                        </div>
-                        <div class="category-label">Gas</div>
-                        <div class="category-amount">$1,020</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: 85%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$1,833</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: 60%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$1,320</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="account-card" data-account="checking">
-                <div class="account-header">
-                    <div class="account-info">
-                        <div class="account-name">Main Checking</div>
-                    </div>
-                    <div class="account-balance-section">
-                        <div class="account-balance">$2,152.68 / $5,000.00</div>
-                        <div class="account-balance-label">Spent / Limit</div>
-                    </div>
-                </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: 65%;"></div>
-                        </div>
-                        <div class="category-label">Gas</div>
-                        <div class="category-amount">$420</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: 45%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$290</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: 85%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$548</div>
-                    </div>
-                </div>
-            </div>
+        <div class="accounts-list" id="accounts-container">
+            <!-- Dynamic accounts will be injected here -->
             
-            <div class="account-card" data-account="savings">
-                <div class="account-header">
-                    <div class="account-info">
-                        <div class="account-name">Emergency Fund</div>
-                    </div>
-                    <div class="account-balance-section">
-                        <div class="account-balance">$1,477.00 / $10,000.00</div>
-                        <div class="account-balance-label">Spent / Limit</div>
-                    </div>
-                </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: 35%;"></div>
-                        </div>
-                        <div class="category-label">Gas</div>
-                        <div class="category-amount">$180</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: 75%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$850</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: 40%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$225</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="account-card" data-account="credit">
-                <div class="account-header">
-                    <div class="account-info">
-                        <div class="account-name">Rewards Card</div>
-                    </div>
-                    <div class="account-balance-section">
-                        <div class="account-balance">$1,284.56 / $5,000.00</div>
-                        <div class="account-balance-label">Spent / Limit</div>
-                    </div>
-                </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: 55%;"></div>
-                        </div>
-                        <div class="category-label">Gas</div>
-                        <div class="category-amount">$325</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: 90%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$615</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: 48%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$344</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="account-card" data-account="debit">
-                <div class="account-header">
-                    <div class="account-info">
-                        <div class="account-name">Everyday Spending</div>
-                    </div>
-                    <div class="account-balance-section">
-                        <div class="account-balance">$376.82 / $1,000.00</div>
-                        <div class="account-balance-label">Spent / Limit</div>
-                    </div>
-                </div>
-                <div class="spending-graph">
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill gas-bar" style="height: 30%;"></div>
-                        </div>
-                        <div class="category-label">Gas</div>
-                        <div class="category-amount">$95</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill travel-bar" style="height: 25%;"></div>
-                        </div>
-                        <div class="category-label">Travel</div>
-                        <div class="category-amount">$78</div>
-                    </div>
-                    <div class="category-bar">
-                        <div class="bar-container">
-                            <div class="bar-fill groceries-bar" style="height: 70%;"></div>
-                        </div>
-                        <div class="category-label">Groceries</div>
-                        <div class="category-amount">$203</div>
-                    </div>
-                </div>
-            </div>
-
             <button class="add-account-btn">
                 <span class="plus-icon">+</span>
                 <span>Add Account</span>
@@ -466,17 +292,6 @@
         </div>
     </div>
 
-    <script>
-        // Account card selection
-        const accountCards = document.querySelectorAll('.account-card');
-        accountCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remove selected class from all cards
-                accountCards.forEach(c => c.classList.remove('selected'));
-                // Add selected class to clicked card
-                card.classList.add('selected');
-            });
-        });
-    </script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -30,6 +30,8 @@
   {
     "id": 3,
     "name": "Citi",
+    "limit" : 5000, 
+    "balance" : 2500, 
     "nickname": "Citi Credit Card",
     "cashback": {
       "fuel": 2,
